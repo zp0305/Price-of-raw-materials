@@ -1,0 +1,139 @@
+:root {
+    --up-color: #ef4444;
+    --down-color: #22c55e;
+    --neutral-color: #6b7280;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 价格卡片 */
+.price-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.price-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.price-card.active {
+    ring: 2px;
+    ring-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.price-up {
+    color: var(--up-color);
+}
+
+.price-down {
+    color: var(--down-color);
+}
+
+.price-neutral {
+    color: var(--neutral-color);
+}
+
+.bg-up {
+    background-color: #fef2f2;
+}
+
+.bg-down {
+    background-color: #f0fdf4;
+}
+
+.bg-neutral {
+    background-color: #f9fafb;
+}
+
+/* 筛选按钮 */
+.filter-btn.active {
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* 时间范围按钮 */
+.range-btn.active {
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* 资讯条目 */
+.news-item {
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.news-item:hover {
+    border-left-color: #3b82f6;
+    background-color: #f8fafc;
+}
+
+.news-item.rare-earth {
+    border-left-color: #8b5cf6;
+}
+
+.news-item.sife {
+    border-left-color: #06b6d4;
+}
+
+.news-item.metal {
+    border-left-color: #f59e0b;
+}
+
+/* 表格样式 */
+table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* 动画 */
+@keyframes pulse-border {
+    0%, 100% {
+        border-color: #3b82f6;
+    }
+    50% {
+        border-color: #93c5fd;
+    }
+}
+
+.updating {
+    animation: pulse-border 1s ease-in-out infinite;
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+    .price-card {
+        padding: 0.75rem;
+    }
+    
+    .price-card .price-value {
+        font-size: 1.25rem;
+    }
+}
