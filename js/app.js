@@ -1,9 +1,11 @@
 // 全局数据存储
 let priceData = null;
+let industryData = null;
 let chartInstance = null;
 let currentMaterial = null;
 let currentRange = 7;
 let currentFilter = 'all';
+let currentNewsFilter = 'all';
 
 // 材料分类
 const materialCategories = {
@@ -20,17 +22,27 @@ const materialCategories = {
     'DYFE': 'rare'
 };
 
+// 分类名称映射
+const categoryNames = {
+    'rare-earth': '稀土',
+    'sife': '硅钢',
+    'metal': '有色',
+    'policy': '政策',
+    'supply-chain': '供应链'
+};
+
 // 初始化
 async function init() {
     await loadData();
+    await loadIndustryData();
     renderCards();
     renderChart();
     renderHistoryTable();
-    renderIndustryNews();
+    initDateInputs();
     updateTimestamp();
 }
 
-// 加载数据
+// 加载价格数据
 async function loadData() {
     try {
         const response = await fetch('data/prices.json');
@@ -46,6 +58,20 @@ async function loadData() {
     } catch (error) {
         console.error('加载数据失败:', error);
         showError('数据加载失败，请刷新页面重试');
+    }
+}
+
+// 加载行业资讯数据
+async function loadIndustryData() {
+    try {
+        const response = await fetch('data/industry.json');
+        industryData = await response.json();
+        renderIndustryNews();
+    } catch (error) {
+        console.error('加载行业资讯失败:', error);
+        // 使用备用数据
+        industryData = null;
+        renderIndustryNews();
     }
 }
 
@@ -78,6 +104,20 @@ function populateSelectors() {
         highlightCard(currentMaterial);
         document.getElementById('material-select').value = currentMaterial;
     });
+}
+
+// 初始化日期输入框
+function initDateInputs() {
+    const today = new Date().toISOString().split('T')[0];
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    
+    const startInput = document.getElementById('export-start');
+    const endInput = document.getElementById('export-end');
+    
+    if (startInput && endInput) {
+        startInput.value = thirtyDaysAgo;
+        endInput.value = today;
+    }
 }
 
 // 渲染价格卡片
@@ -315,78 +355,133 @@ function renderHistoryTable() {
 function renderIndustryNews() {
     const container = document.getElementById('industry-news');
     
-    // 示例资讯数据（后续可从JSON文件加载）
-    const news = [
-        {
-            title: 'SMM分析：稀土价格短期震荡偏弱运行',
-            date: '2026-04-08',
-            category: 'rare-earth',
-            summary: '下游磁材企业按需采购，市场观望情绪浓厚。'
-        },
-        {
-            title: '上海市场无取向硅钢报价持稳',
-            date: '2026-04-08',
-            category: 'sife',
-            summary: 'B35A300、B50A350等主流规格价格维持不变。'
-        },
-        {
-            title: '电解铜价格上涨1080元/吨',
-            date: '2026-04-08',
-            category: 'metal',
-            summary: '受宏观情绪提振，铜价延续反弹走势。'
-        },
-        {
-            title: '镨钕氧化物价格下调5000元',
-            date: '2026-04-08',
-            category: 'rare-earth',
-            summary: '供应端产能释放，下游需求尚未完全恢复。'
-        }
-    ];
+    // 使用加载的JSON数据或备用数据
+    let news = [];
+    if (industryData && industryData.news) {
+        news = industryData.news;
+    } else {
+        // 备用数据
+        news = [
+            { title: 'SMM分析：稀土价格短期震荡偏弱运行', date: '2026-04-08', category: 'rare-earth', summary: '下游磁材企业按需采购，市场观望情绪浓厚。' },
+            { title: '上海市场无取向硅钢报价持稳', date: '2026-04-08', category: 'sife', summary: 'B35A300、B50A350等主流规格价格维持不变。' },
+            { title: '电解铜价格上涨1080元/吨', date: '2026-04-08', category: 'metal', summary: '受宏观情绪提振，铜价延续反弹走势。' }
+        ];
+    }
     
-    const items = news.map(n => `
-        <div class="news-item ${n.category} p-3 rounded-lg cursor-pointer">
-            <div class="flex items-start justify-between mb-1">
-                <h3 class="text-sm font-medium text-gray-800 line-clamp-2">${n.title}</h3>
-            </div>
-            <p class="text-xs text-gray-500 mb-1">${n.summary}</p>
-            <div class="flex items-center justify-between">
-                <span class="text-xs text-gray-400">${n.date}</span>
-                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">${getCategoryName(n.category)}</span>
-            </div>
-        </div>
-    `).join('');
+    // 筛选
+    if (currentNewsFilter !== 'all') {
+        news = news.filter(n => n.category === currentNewsFilter);
+    }
     
-    container.innerHTML = items;
+    const items = news.map(n => {
+        const categoryName = categoryNames[n.category] || '其他';
+        const hasDetail = n.detail && n.detail.length > n.summary.length;
+        return `
+            <div class="news-item p-3 rounded-lg hover:bg-gray-50 transition-colors ${n.category}"
+                 onclick="toggleNewsDetail(this)"
+                 data-expanded="false">
+                <div class="flex items-start justify-between mb-1">
+                    <h3 class="text-sm font-medium text-gray-800 line-clamp-2 flex-1 mr-2">${n.title}</h3>
+                    ${hasDetail ? '<span class="text-blue-500 text-xs expand-icon">展开▼</span>' : ''}
+                </div>
+                <p class="text-xs text-gray-600 mb-1 summary">${n.summary}</p>
+                ${n.detail ? `<p class="text-xs text-gray-500 mt-2 hidden detail border-t border-gray-100 pt-2">${n.detail}</p>` : ''}
+                <div class="flex items-center justify-between mt-2">
+                    <span class="text-xs text-gray-400">${n.date} · ${n.source || 'SMM'}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">${categoryName}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = items || '<div class="text-center text-gray-500 py-8">暂无相关资讯</div>';
 }
 
-// 获取分类名称
-function getCategoryName(cat) {
-    const names = {
-        'rare-earth': '稀土',
-        'sife': '硅钢',
-        'metal': '有色'
-    };
-    return names[cat] || '其他';
+// 切换资讯详情显示
+function toggleNewsDetail(element) {
+    const detail = element.querySelector('.detail');
+    const icon = element.querySelector('.expand-icon');
+    const summary = element.querySelector('.summary');
+    
+    if (!detail) return;
+    
+    const isExpanded = element.dataset.expanded === 'true';
+    
+    if (isExpanded) {
+        detail.classList.add('hidden');
+        summary.classList.remove('hidden');
+        if (icon) icon.textContent = '展开▼';
+        element.dataset.expanded = 'false';
+    } else {
+        detail.classList.remove('hidden');
+        summary.classList.add('hidden');
+        if (icon) icon.textContent = '收起▲';
+        element.dataset.expanded = 'true';
+    }
 }
 
-// 导出CSV
+// 筛选行业资讯
+function filterNews() {
+    const select = document.getElementById('news-filter');
+    currentNewsFilter = select.value;
+    renderIndustryNews();
+}
+
+// 导出CSV（支持时间范围）
 function exportCSV() {
     const history = priceData.history[currentMaterial] || [];
     const material = priceData.today.find(m => m.code === currentMaterial);
     
-    let csv = '日期,价格,涨跌,涨跌幅\n';
+    // 获取时间范围
+    const startInput = document.getElementById('export-start');
+    const endInput = document.getElementById('export-end');
     
-    history.forEach((h, index) => {
-        const prev = history[index + 1];
+    let startDate = null;
+    let endDate = null;
+    
+    if (startInput && startInput.value) {
+        startDate = new Date(startInput.value);
+    }
+    if (endInput && endInput.value) {
+        endDate = new Date(endInput.value);
+        endDate.setHours(23, 59, 59, 999); // 包含结束日期全天
+    }
+    
+    // 筛选数据
+    let filteredHistory = history;
+    if (startDate || endDate) {
+        filteredHistory = history.filter(h => {
+            const hDate = new Date(h.date);
+            if (startDate && hDate < startDate) return false;
+            if (endDate && hDate > endDate) return false;
+            return true;
+        });
+    }
+    
+    if (filteredHistory.length === 0) {
+        alert('选定时间范围内无数据');
+        return;
+    }
+    
+    let csv = '\uFEFF日期,价格,涨跌,涨跌幅\n';
+    
+    filteredHistory.forEach((h, index) => {
+        const prev = filteredHistory[index + 1];
         const change = prev ? h.price - prev.price : 0;
         const changePercent = prev ? ((change / prev.price) * 100).toFixed(2) : '0.00';
         csv += `${h.date},${h.price},${change},${changePercent}%\n`;
     });
     
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${material ? material.name : currentMaterial}_历史价格_${new Date().toISOString().slice(0,10)}.csv`;
+    
+    // 文件名包含时间范围
+    const startStr = startInput && startInput.value ? startInput.value : 'all';
+    const endStr = endInput && endInput.value ? endInput.value : 'all';
+    const dateRange = startStr !== 'all' ? `_${startStr}_to_${endStr}` : '';
+    
+    link.download = `${material ? material.name : currentMaterial}_历史价格${dateRange}.csv`;
     link.click();
 }
 
