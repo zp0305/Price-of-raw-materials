@@ -1,79 +1,105 @@
-# 原材料价格监控面板
+# 原材料价格监控 - GitHub Actions自动版
 
-星辰科技供应链管理中心 - 原材料价格实时监控网页
+星辰科技供应链管理中心 - 原材料价格实时监控
 
-## 功能
+## 🚀 快速部署指南
 
-- **今日价格概览**：11种关键材料实时价格卡片，涨跌一目了然
-- **价格走势图**：支持7天/30天/90天历史走势查看
-- **历史数据查询**：完整历史价格表格，支持CSV导出
-- **行业资讯**：稀土、硅钢、有色市场动态
+### 第一步：创建GitHub仓库
 
-## 技术栈
+1. 访问 https://github.com/new
+2. 仓库名称：`raw-material-prices`（或其他名称）
+3. 选择 **Public**（公开）或 **Private**（私有）
+4. 点击 **Create repository**
 
-- HTML5 + Tailwind CSS（响应式布局）
-- Chart.js（数据可视化）
-- 纯前端实现，无需后端服务
+### 第二步：上传文件
 
-## 数据更新
-
-数据每日自动更新：
-1. 11:30 自动抓取SMM最新价格
-2. 导出JSON数据文件
-3. 推送至GitHub Pages自动部署
-
-## 部署
-
-### GitHub Pages（推荐）
-
-1. 将 `website/` 目录内容推送至GitHub仓库
-2. 启用 GitHub Pages（Settings → Pages → Source: Deploy from a branch）
-3. 选择 `main` 分支，`/ (root)` 目录
-4. 访问 `https://[username].github.io/[repo-name]/`
-
-### 本地预览
+将 `github-repo` 目录下的所有文件上传到仓库：
 
 ```bash
-cd website
-python3 -m http.server 8080
-# 访问 http://localhost:8080
+cd github-repo
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/你的用户名/raw-material-prices.git
+git push -u origin main
 ```
 
-## 文件结构
+或者在GitHub网页上直接上传文件。
+
+### 第三步：启用GitHub Pages
+
+1. 进入仓库 → **Settings** → **Pages**
+2. **Source** 选择 **GitHub Actions**
+3. 系统会自动识别 `.github/workflows/daily-update.yml`
+
+### 第四步：测试运行
+
+1. 进入仓库 → **Actions** 标签
+2. 点击 **Daily Price Update**
+3. 点击 **Run workflow** 手动触发一次
+4. 等待运行完成（约1-2分钟）
+
+### 第五步：访问网站
+
+部署完成后，访问：
+```
+https://你的用户名.github.io/raw-material-prices/
+```
+
+## 📊 功能
+
+- **自动抓取**：每天11:30自动抓取最新价格
+- **实时监控**：16种关键材料价格卡片
+- **涨跌显示**：直观显示价格变化趋势
+- **无需服务器**：完全免费，使用GitHub基础设施
+
+## 🛠️ 技术栈
+
+- **GitHub Actions**：定时任务 + 自动部署
+- **GitHub Pages**：静态网站托管（免费）
+- **Python + Requests**：网页抓取
+- **纯HTML/CSS/JS**：前端展示
+
+## 📁 文件说明
 
 ```
-website/
-├── index.html          # 主页面
-├── css/
-│   └── style.css       # 样式文件
-├── js/
-│   └── app.js          # 主逻辑
+github-repo/
+├── .github/workflows/
+│   └── daily-update.yml    # GitHub Actions配置
 ├── data/
-│   ├── prices.json     # 价格数据（自动更新）
-│   └── industry.json   # 行业资讯
-└── README.md
+│   ├── prices.json         # 历史价格数据
+│   └── today.json          # 今日数据快照
+├── scripts/
+│   └── crawl_prices.py     # 爬虫脚本
+├── index.html              # 网站首页
+└── README.md               # 本文件
 ```
 
-## 材料清单
+## 🔧 常见问题
 
-| 代码 | 名称 | 类别 |
-|:---|:---|:---|
-| CU | 电解铜 | 有色 |
-| ADC12 | 铝合金锭 | 有色 |
-| B35A300 | 硅钢B35A300 | 硅钢 |
-| B50A350 | 硅钢B50A350 | 硅钢 |
-| B50A470 | 硅钢B50A470 | 硅钢 |
-| B50A600 | 硅钢B50A600 | 硅钢 |
-| REO | 镨钕氧化物 | 稀土 |
-| REN | 镨钕金属 | 稀土 |
-| TB | 金属铽 | 稀土 |
-| CE | 铈金属 | 稀土 |
-| DYFE | 镝铁合金 | 稀土 |
+### Q: 为什么有些材料抓取失败？
+A: 上海有色网可能有反爬虫机制，或页面结构变化。系统会记录成功抓取的材料，失败的在下次重试。
 
-## 数据来源
+### Q: 如何修改定时时间？
+A: 编辑 `.github/workflows/daily-update.yml` 中的 `cron` 表达式：
+```yaml
+# 每天11:30 UTC+8
+- cron: '30 3 * * *'
+```
 
-- 上海有色网 (SMM): https://hq.smm.cn
+### Q: 可以添加更多材料吗？
+A: 可以。编辑 `scripts/crawl_prices.py`，在 `SOURCES` 字典中添加新的URL和解析规则。
 
-## 更新日志
+### Q: 数据存储在哪里？
+A: 数据保存在 `data/prices.json` 中，作为仓库的一部分。保留90天历史数据。
 
-- 2026-04-08: v1.0 初始版本，11种材料价格监控
+## 📞 维护
+
+- **自动更新**：无需人工干预
+- **监控日志**：在 GitHub Actions 中查看每次运行的日志
+- **手动触发**：可随时手动运行 workflow 测试
+
+---
+
+星辰科技供应链管理中心
