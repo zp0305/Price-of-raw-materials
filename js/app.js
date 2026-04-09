@@ -11,15 +11,16 @@ let currentNewsFilter = 'all';
 const materialCategories = {
     'CU': 'cu',
     'ADC12': 'cu',
+    'AL6063': 'cu',
     'B35A300': 'sife',
+    'B50A310': 'sife',
     'B50A350': 'sife',
     'B50A470': 'sife',
     'B50A600': 'sife',
     'REO': 'rare',
     'REN': 'rare',
     'TB': 'rare',
-    'CE': 'rare',
-    'DYFE': 'rare'
+    'CE': 'rare'
 };
 
 // 分类名称映射

@@ -1,52 +1,87 @@
 {
-  "update_time": "2026-04-09 12:29",
+  "update_time": "2026-04-09 14:23",
   "today": [
+    {
+      "code": "CU",
+      "name": "电解铜",
+      "price": 97620.0,
+      "change": -190.0,
+      "date": "2026-04-09"
+    },
     {
       "code": "ADC12",
       "name": "ADC12",
-      "price": 24300,
-      "change": -200,
+      "price": 24300.0,
+      "change": 0,
+      "date": "2026-04-09"
+    },
+    {
+      "code": "AL6063",
+      "name": "6063铝棒",
+      "price": 24300.0,
+      "change": 0,
       "date": "2026-04-09"
     },
     {
       "code": "B35A300",
-      "name": "B35A300",
-      "price": 6100,
+      "name": "硅钢B35A300",
+      "price": 6100.0,
+      "change": 0,
+      "date": "2026-04-09"
+    },
+    {
+      "code": "B50A310",
+      "name": "硅钢B50A310",
+      "price": 5650.0,
+      "change": 0,
+      "date": "2026-04-09"
+    },
+    {
+      "code": "B50A350",
+      "name": "硅钢B50A350",
+      "price": 5650.0,
       "change": 0,
       "date": "2026-04-09"
     },
     {
       "code": "B50A470",
-      "name": "B50A470",
-      "price": 5050,
+      "name": "硅钢B50A470",
+      "price": 5050.0,
       "change": 0,
       "date": "2026-04-09"
     },
     {
       "code": "B50A600",
-      "name": "B50A600",
-      "price": 4650,
-      "change": 0,
-      "date": "2026-04-09"
-    },
-    {
-      "code": "CU",
-      "name": "电解铜",
-      "price": 97620,
-      "change": -190,
-      "date": "2026-04-09"
-    },
-    {
-      "code": "REN",
-      "name": "镨钕金属",
-      "price": 920000,
+      "name": "硅钢B50A600",
+      "price": 4650.0,
       "change": 0,
       "date": "2026-04-09"
     },
     {
       "code": "REO",
       "name": "镨钕氧化物",
-      "price": 757500,
+      "price": 757500.0,
+      "change": -5000.0,
+      "date": "2026-04-09"
+    },
+    {
+      "code": "REN",
+      "name": "镨钕金属",
+      "price": 920000.0,
+      "change": -2500.0,
+      "date": "2026-04-09"
+    },
+    {
+      "code": "TB",
+      "name": "氧化铽",
+      "price": 6085.0,
+      "change": 0,
+      "date": "2026-04-09"
+    },
+    {
+      "code": "CE",
+      "name": "氧化铈",
+      "price": 14250.0,
       "change": 0,
       "date": "2026-04-09"
     }
