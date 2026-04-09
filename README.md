@@ -78,6 +78,21 @@ github-repo/
 
 ## 🔧 常见问题
 
+### Q: 如何手动刷新数据？
+A: 页面上点击 **"🔄 刷新数据"** 按钮即可手动触发爬虫。首次使用需要配置GitHub Token：
+
+1. 点击 **"⚙️ 配置"** 按钮
+2. 输入GitHub仓库路径（如：`yourname/raw-material-prices`）
+3. 创建Personal Access Token：
+   - 访问 https://github.com/settings/tokens
+   - 点击 **Generate new token (classic)**
+   - 勾选 `repo` 和 `workflow` 权限
+   - 生成后复制token
+4. 将token粘贴到配置中，点击保存
+5. 现在可以点击 **"🔄 刷新数据"** 手动触发更新了
+
+**安全提示**：Token只保存在浏览器本地，不会上传到任何服务器。建议设置token有效期。
+
 ### Q: 为什么有些材料抓取失败？
 A: 上海有色网可能有反爬虫机制，或页面结构变化。系统会记录成功抓取的材料，失败的在下次重试。
 
