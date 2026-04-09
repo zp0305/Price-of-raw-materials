@@ -508,3 +508,104 @@ function showError(msg) {
 
 // 启动
 init();
+
+// ========== GitHub Actions 手动刷新功能 ==========
+
+// 从URL或localStorage获取仓库路径
+function getRepoPath() {
+    const hostname = window.location.hostname;
+    if (hostname.endsWith('github.io')) {
+        const pathParts = window.location.pathname.split('/').filter(p => p);
+        if (pathParts.length > 0) {
+            return hostname.replace('.github.io', '') + '/' + pathParts[0];
+        }
+    }
+    return localStorage.getItem('github_repo') || '';
+}
+
+// 手动刷新数据
+async function refreshData() {
+    const repo = getRepoPath();
+    const token = localStorage.getItem('github_token');
+    
+    if (!token || !repo) {
+        if (confirm('首次使用需要配置GitHub信息才能手动触发数据更新。\n\n是否现在配置？')) {
+            showConfig();
+        }
+        return;
+    }
+    
+    if (!confirm('确定要手动触发数据更新吗？\n这会启动GitHub Actions工作流，约1-2分钟后完成。')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/daily-update.yml/dispatches`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ref: 'main' })
+        });
+        
+        if (response.ok) {
+            alert('✅ 数据更新已触发！\n\n约1-2分钟后，请刷新页面查看最新数据。');
+        } else if (response.status === 401) {
+            alert('❌ Token无效，请重新配置');
+            localStorage.removeItem('github_token');
+        } else if (response.status === 404) {
+            alert('❌ 工作流未找到，请检查仓库路径');
+        } else {
+            alert(`❌ 触发失败: ${response.status}\n请检查GitHub Actions是否已启用。`);
+        }
+    } catch (e) {
+        alert('❌ 网络错误，请检查网络连接');
+        console.error(e);
+    }
+}
+
+// 显示配置对话框
+function showConfig() {
+    const currentRepo = getRepoPath();
+    const currentToken = localStorage.getItem('github_token') ? '已配置（隐藏）' : '未配置';
+    
+    const repo = prompt(
+        '配置GitHub仓库路径（格式：用户名/仓库名）：\n\n' +
+        '例如：zhangsan/raw-material-prices',
+        currentRepo
+    );
+    
+    if (repo === null) return; // 用户取消
+    
+    if (repo && repo.includes('/')) {
+        localStorage.setItem('github_repo', repo);
+    }
+    
+    const token = prompt(
+        '配置GitHub Personal Access Token：\n\n' +
+        '1. 访问 https://github.com/settings/tokens\n' +
+        '2. 点击 Generate new token (classic)\n' +
+        '3. 勾选 repo 和 workflow 权限\n' +
+        '4. 生成后复制token粘贴到这里\n\n' +
+        `当前状态：${currentToken}`
+    );
+    
+    if (token && token.startsWith('ghp_')) {
+        localStorage.setItem('github_token', token);
+        alert('✅ 配置已保存！现在可以点击"刷新数据"按钮了。');
+    } else if (token) {
+        alert('⚠️ Token格式不正确，应以 ghp_ 开头');
+    }
+}
+
+// 打开GitHub Actions页面
+function openGitHubActions() {
+    const repo = getRepoPath();
+    if (repo) {
+        window.open(`https://github.com/${repo}/actions`, '_blank');
+    } else {
+        alert('请先配置GitHub仓库路径');
+    }
+}

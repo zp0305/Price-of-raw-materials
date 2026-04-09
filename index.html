@@ -3,515 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原材料价格监控 - 星辰科技</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .update-time {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .material-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-        .material-code {
-            font-size: 12px;
-            color: #999;
-            background: #f0f0f0;
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-        .price {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .price-change {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .price-up {
-            background: #fff2f0;
-            color: #cf1322;
-        }
-        .price-down {
-            background: #f6ffed;
-            color: #389e0d;
-        }
-        .price-flat {
-            background: #f5f5f5;
-            color: #666;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: #999;
-            font-size: 12px;
-        }
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: #666;
-        }
-        .error {
-            text-align: center;
-            padding: 60px;
-            color: #cf1322;
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        .btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-primary {
-            background: #1890ff;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #40a9ff;
-        }
-        .btn-secondary {
-            background: white;
-            color: #666;
-            border: 1px solid #d9d9d9;
-        }
-        .btn-secondary:hover {
-            border-color: #1890ff;
-            color: #1890ff;
-        }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal.show {
-            display: flex;
-        }
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 90%;
-        }
-        .modal-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .modal-body {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .toast.show {
-            opacity: 1;
-        }
-        .toast-success {
-            background: #52c41a;
-        }
-        .toast-error {
-            background: #ff4d4f;
-        }
-        .toast-info {
-            background: #1890ff;
-        }
-    </style>
+    <title>原材料价格监控 | 星辰科技</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <div class="container">
-        <h1>🌟 原材料价格监控面板</h1>        
-        <div class="controls">
-            <button class="btn btn-primary" onclick="refreshData()">
-                🔄 刷新数据
-            </button>
-            <button class="btn btn-secondary" onclick="showConfig()">
-                ⚙️ 配置
-            </button>
-            <button class="btn btn-secondary" onclick="window.open('https://github.com/' + getRepoPath() + '/actions', '_blank')">
-                📊 查看运行日志
-            </button>
-        </div>
-        
-        <div class="update-time" id="updateTime">加载中...</div>
-        <div class="grid" id="priceGrid">
-            <div class="loading">正在加载数据...</div>
-        </div>
-        <div class="footer">
-            <p>数据来源：上海有色网 (SMM)</p>
-            <p>更新时间：每日 11:30</p>
-            <p>星辰科技供应链管理中心</p>
-        </div>
-    </div>
-
-    <script>
-        const materialNames = {
-            'CU': '电解铜',
-            'ADC12': '铝合金锭',
-            'AL6063': '6063铝棒',
-            'B35A300': '硅钢 B35A300',
-            'B50A350': '硅钢 B50A350',
-            'B50A470': '硅钢 B50A470',
-            'B50A600': '硅钢 B50A600',
-            '35WW300': '硅钢 35WW300',
-            '50WW310': '硅钢 50WW310',
-            '50WW470': '硅钢 50WW470',
-            '50WW600': '硅钢 50WW600',
-            'REO': '镨钕氧化物',
-            'REN': '镨钕金属',
-            'TB': '金属铽',
-            'CE': '铈金属',
-            'DYFE': '镝铁合金'
-        };
-
-        async function loadData() {
-            try {
-                // 尝试加载今日数据（新格式）
-                const response = await fetch('data/today.json?t=' + Date.now());
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.materials) {
-                        document.getElementById('updateTime').textContent = 
-                            `更新日期：${data.date} ${data.update_time}`;
-                        renderCards(data.materials);
-                        return;
-                    }
-                }
-                throw new Error('today.json不存在或格式错误');
-            } catch (e) {
-                // 尝试加载旧格式数据
-                try {
-                    const response = await fetch('data/prices.json?t=' + Date.now());
-                    if (!response.ok) throw new Error('加载失败');
-                    const data = await response.json();
-                    
-                    // 兼容旧格式：{update_time, today: [{code, name, price, change, date}, ...]}
-                    if (data.today && Array.isArray(data.today)) {
-                        const materials = {};
-                        data.today.forEach(item => {
-                            materials[item.code] = {
-                                price: item.price,
-                                change: item.change || 0
-                            };
-                        });
-                        document.getElementById('updateTime').textContent = 
-                            `更新日期：${data.update_time || '未知'}`;
-                        renderCards(materials);
-                        return;
-                    }
-                    
-                    // 兼容另一种格式：{CODE: [{date, price, change}, ...]}
-                    const materials = {};
-                    Object.entries(data).forEach(([code, records]) => {
-                        if (Array.isArray(records) && records.length > 0) {
-                            const latest = records[records.length - 1];
-                            materials[code] = {
-                                price: latest.price,
-                                change: latest.change || 0
-                            };
-                        }
-                    });
-                    document.getElementById('updateTime').textContent = 
-                        `数据来源：历史数据`;
-                    renderCards(materials);
-                } catch (e2) {
-                    document.getElementById('priceGrid').innerHTML = 
-                        '<div class="error">数据加载失败，请稍后刷新</div>';
-                    console.error('数据加载错误:', e2);
-                }
-            }
-        }
-
-        function renderCards(materials) {
-            const grid = document.getElementById('priceGrid');
-            grid.innerHTML = '';
-            
-            Object.entries(materials).forEach(([code, data]) => {
-                const name = materialNames[code] || code;
-                const change = data.change || 0;
-                let changeClass = 'price-flat';
-                let changeText = '持平';
-                
-                if (change > 0) {
-                    changeClass = 'price-up';
-                    changeText = `+${change}`;
-                } else if (change < 0) {
-                    changeClass = 'price-down';
-                    changeText = `${change}`;
-                }
-                
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-header">
-                        <span class="material-name">${name}</span>
-                        <span class="material-code">${code}</span>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶部导航 -->
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <span class="text-xl font-bold">¥</span>
                     </div>
-                    <div class="price">${data.price.toLocaleString()}</div>
-                    <span class="price-change ${changeClass}">${changeText}</span>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        // 页面加载时获取数据
-        loadData();
-        
-        // 从URL或localStorage获取仓库路径
-        function getRepoPath() {
-            // 尝试从当前URL推断（如果是GitHub Pages）
-            const hostname = window.location.hostname;
-            if (hostname.endsWith('github.io')) {
-                const pathParts = window.location.pathname.split('/').filter(p => p);
-                if (pathParts.length > 0) {
-                    return hostname.replace('.github.io', '') + '/' + pathParts[0];
-                }
-            }
-            // 从localStorage读取
-            return localStorage.getItem('github_repo') || '用户名/仓库名';
-        }
-        
-        // 刷新数据
-        async function refreshData() {
-            const repo = getRepoPath();
-            const token = localStorage.getItem('github_token');
-            
-            if (!token) {
-                showModal('需要配置', 
-                    '首次使用需要配置GitHub Personal Access Token才能手动触发数据更新。<br><br>' +
-                    '或者，您可以直接访问GitHub Actions页面手动运行工作流。',
-                    [
-                        { text: '去配置', action: () => { hideModal(); showConfig(); }, primary: true },
-                        { text: '去GitHub运行', action: () => { window.open(`https://github.com/${repo}/actions`, '_blank'); hideModal(); } },
-                        { text: '取消', action: hideModal }
-                    ]
-                );
-                return;
-            }
-            
-            showToast('正在触发数据更新...', 'info');
-            
-            try {
-                const response = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/daily-update.yml/dispatches`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        ref: 'main'
-                    })
-                });
-                
-                if (response.ok) {
-                    showToast('✅ 数据更新已触发！约1分钟后刷新页面查看最新数据', 'success');
-                } else if (response.status === 401) {
-                    showToast('❌ Token无效，请重新配置', 'error');
-                    localStorage.removeItem('github_token');
-                } else if (response.status === 404) {
-                    showToast('❌ 工作流未找到，请检查仓库路径', 'error');
-                } else {
-                    const error = await response.text();
-                    showToast(`❌ 触发失败: ${response.status}`, 'error');
-                    console.error(error);
-                }
-            } catch (e) {
-                showToast('❌ 网络错误，请检查网络连接', 'error');
-                console.error(e);
-            }
-        }
-        
-        // 显示配置
-        function showConfig() {
-            const currentRepo = getRepoPath();
-            const currentToken = localStorage.getItem('github_token') ? '已配置（隐藏）' : '未配置';
-            
-            showModal('配置',
-                `<div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">GitHub仓库路径</label>
-                    <input type="text" id="configRepo" value="${currentRepo}" placeholder="用户名/仓库名" 
-                           style="width: 100%; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;">
-                    <small style="color: #999;">格式：用户名/仓库名</small>
+                    <div>
+                        <h1 class="text-xl font-bold">原材料价格监控</h1>
+                        <p class="text-xs text-gray-400">星辰科技 · 供应链管理中心</p>
+                    </div>
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Personal Access Token</label>
-                    <input type="password" id="configToken" placeholder="ghp_xxxxxxxxxxxx" 
-                           style="width: 100%; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;">
-                    <small style="color: #999;">当前：${currentToken} <a href="https://github.com/settings/tokens" target="_blank" style="color: #1890ff;">如何获取?</a></small>
+                <div class="text-right">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="refreshData()" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 flex items-center space-x-1">
+                            <span>🔄</span>
+                            <span>刷新数据</span>
+                        </button>
+                        <button onclick="showConfig()" class="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700">
+                            ⚙️ 配置
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-300 mt-1">数据更新于</p>
+                    <p id="update-time" class="text-lg font-mono font-semibold text-blue-400">--</p>
                 </div>
-                <div style="background: #fff7e6; border: 1px solid #ffd591; padding: 10px; border-radius: 4px; font-size: 12px; color: #d48806;">
-                    <strong>⚠️ 安全提示</strong><br>
-                    Token只保存在浏览器本地存储中，不会上传到服务器。建议使用有有效期限制的token。
-                </div>`,
-                [
-                    { text: '保存', action: saveConfig, primary: true },
-                    { text: '清除配置', action: clearConfig },
-                    { text: '取消', action: hideModal }
-                ]
-            );
-        }
-        
-        // 保存配置
-        function saveConfig() {
-            const repo = document.getElementById('configRepo').value.trim();
-            const token = document.getElementById('configToken').value.trim();
-            
-            if (repo && repo.includes('/')) {
-                localStorage.setItem('github_repo', repo);
-            }
-            if (token) {
-                localStorage.setItem('github_token', token);
-            }
-            
-            hideModal();
-            showToast('✅ 配置已保存', 'success');
-        }
-        
-        // 清除配置
-        function clearConfig() {
-            localStorage.removeItem('github_repo');
-            localStorage.removeItem('github_token');
-            hideModal();
-            showToast('✅ 配置已清除', 'success');
-        }
-        
-        // 模态框
-        function showModal(title, content, buttons) {
-            const modal = document.getElementById('modal');
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalBody').innerHTML = content;
-            
-            const footer = document.getElementById('modalFooter');
-            footer.innerHTML = '';
-            buttons.forEach(btn => {
-                const button = document.createElement('button');
-                button.className = 'btn ' + (btn.primary ? 'btn-primary' : 'btn-secondary');
-                button.textContent = btn.text;
-                button.onclick = btn.action;
-                footer.appendChild(button);
-            });
-            
-            modal.classList.add('show');
-        }
-        
-        function hideModal() {
-            document.getElementById('modal').classList.remove('show');
-        }
-        
-        // Toast提示
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast toast-' + type;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 5000);
-        }
-    </script>
-    
-    <!-- 模态框 -->
-    <div class="modal" id="modal" onclick="if(event.target === this) hideModal()">
-        <div class="modal-content">
-            <div class="modal-title" id="modalTitle"></div>
-            <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer" id="modalFooter"></div>
+            </div>
         </div>
-    </div>
-    
-    <!-- Toast提示 -->
-    <div class="toast" id="toast"></div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6 space-y-6">
+        <!-- 今日概览卡片 -->
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-gray-800">今日价格概览</h2>
+                <div class="flex space-x-2">
+                    <button onclick="filterMaterials('all')" class="filter-btn active px-3 py-1 text-sm rounded-full bg-blue-500 text-white" data-filter="all">全部</button>
+                    <button onclick="filterMaterials('cu')" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700" data-filter="cu">铜铝</button>
+                    <button onclick="filterMaterials('sife')" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700" data-filter="sife">硅钢</button>
+                    <button onclick="filterMaterials('rare')" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700" data-filter="rare">稀土</button>
+                </div>
+            </div>
+            <div id="price-cards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                <!-- 卡片由JS生成 -->
+            </div>
+        </section>
+
+        <!-- 走势图 -->
+        <section class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-gray-800">价格走势</h2>
+                <div class="flex items-center space-x-4">
+                    <select id="material-select" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                        <!-- 选项由JS生成 -->
+                    </select>
+                    <div class="flex space-x-1">
+                        <button onclick="setChartRange(7)" class="range-btn px-3 py-1 text-sm rounded bg-blue-500 text-white" data-range="7">7天</button>
+                        <button onclick="setChartRange(30)" class="range-btn px-3 py-1 text-sm rounded bg-gray-200 text-gray-700" data-range="30">30天</button>
+                        <button onclick="setChartRange(90)" class="range-btn px-3 py-1 text-sm rounded bg-gray-200 text-gray-700" data-range="90">90天</button>
+                        <button onclick="setChartRange(180)" class="range-btn px-3 py-1 text-sm rounded bg-gray-200 text-gray-700" data-range="180">半年</button>
+                        <button onclick="setChartRange(365)" class="range-btn px-3 py-1 text-sm rounded bg-gray-200 text-gray-700" data-range="365">一年</button>
+                        <button onclick="setChartRange(0)" class="range-btn px-3 py-1 text-sm rounded bg-gray-200 text-gray-700" data-range="0">全部</button>
+                    </div>
+                </div>
+            </div>
+            <div class="relative h-80">
+                <canvas id="price-chart"></canvas>
+            </div>
+        </section>
+
+        <div class="grid lg:grid-cols-2 gap-6">
+            <!-- 行业资讯 -->
+            <section class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-gray-800">行业资讯</h2>
+                    <select id="news-filter" onchange="filterNews()" class="px-2 py-1 border border-gray-300 rounded text-sm">
+                        <option value="all">全部</option>
+                        <option value="rare-earth">稀土</option>
+                        <option value="sife">硅钢</option>
+                        <option value="metal">有色</option>
+                        <option value="policy">政策</option>
+                        <option value="supply-chain">供应链</option>
+                    </select>
+                </div>
+                <div id="industry-news" class="space-y-3 max-h-[500px] overflow-y-auto">
+                    <!-- 资讯由JS生成 -->
+                </div>
+            </section>
+
+            <!-- 历史数据表 -->
+            <section class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-gray-800">历史数据</h2>
+                    <select id="history-material" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <!-- 选项由JS生成 -->
+                    </select>
+                </div>
+                
+                <!-- 时间范围选择 -->
+                <div class="flex items-center space-x-2 mb-4 p-3 bg-gray-50 rounded-lg">
+                    <span class="text-sm text-gray-600">导出范围：</span>
+                    <input type="date" id="export-start" class="px-2 py-1 border border-gray-300 rounded text-sm">
+                    <span class="text-gray-400">至</span>
+                    <input type="date" id="export-end" class="px-2 py-1 border border-gray-300 rounded text-sm">
+                    <button onclick="exportCSV()" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">
+                        导出CSV
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto max-h-[350px] overflow-y-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">日期</th>
+                                <th class="px-4 py-3 text-right font-semibold text-gray-700">价格</th>
+                                <th class="px-4 py-3 text-right font-semibold text-gray-700">涨跌</th>
+                                <th class="px-4 py-3 text-right font-semibold text-gray-700">涨跌幅</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table" class="divide-y divide-gray-100">
+                            <!-- 表格由JS生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>数据来源：上海有色网(SMM) | 更新时间：每日11:30</p>
+            <p class="mt-1">© 2026 桂林星辰科技股份有限公司 · 供应链管理中心</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
 </body>
 </html>

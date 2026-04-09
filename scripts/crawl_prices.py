@@ -100,35 +100,60 @@ def load_history():
     prices_file = DATA_DIR / "prices.json"
     if prices_file.exists():
         with open(prices_file, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {}
+            try:
+                data = json.load(f)
+                # 如果已有正确格式的数据，保留它
+                if isinstance(data, dict) and 'today' in data:
+                    return data
+                # 否则返回空结构
+                return {'update_time': '', 'today': []}
+            except:
+                return {'update_time': '', 'today': []}
+    return {'update_time': '', 'today': []}
 
 def save_data(results):
-    """保存数据到JSON"""
+    """保存数据到JSON - 兼容原有格式"""
     today = datetime.now().strftime('%Y-%m-%d')
+    now = datetime.now()
     
     # 加载历史数据
     history = load_history()
     
-    # 更新今日数据
+    # 更新update_time
+    history['update_time'] = now.strftime('%Y-%m-%d %H:%M')
+    
+    # 材料名称映射
+    material_names = {
+        'CU': '电解铜',
+        'ADC12': 'ADC12',
+        'AL6063': '6063铝棒',
+        'B35A300': '硅钢B35A300',
+        'B50A350': '硅钢B50A350',
+        'B50A470': '硅钢B50A470',
+        'B50A600': '硅钢B50A600',
+        '35WW300': '硅钢35WW300',
+        '50WW310': '硅钢50WW310',
+        '50WW470': '硅钢50WW470',
+        '50WW600': '硅钢50WW600',
+        'REO': '镨钕氧化物',
+        'REN': '镨钕金属',
+        'TB': '金属铽',
+        'CE': '铈金属',
+        'DYFE': '镝铁合金'
+    }
+    
+    # 构建新的today数组
+    today_data = []
     for code, data in results.items():
-        if code not in history:
-            history[code] = []
-        
-        # 检查是否已有今日数据
-        existing = [d for d in history[code] if d['date'] == today]
-        if existing:
-            existing[0]['price'] = data['price']
-            existing[0]['change'] = data['change']
-        else:
-            history[code].append({
-                'date': today,
-                'price': data['price'],
-                'change': data['change']
-            })
-        
-        # 只保留最近90天数据
-        history[code] = sorted(history[code], key=lambda x: x['date'])[-90:]
+        today_data.append({
+            'code': code,
+            'name': material_names.get(code, code),
+            'price': data['price'],
+            'change': data.get('change', 0),
+            'date': today
+        })
+    
+    history['today'] = today_data
     
     # 保存
     with open(DATA_DIR / "prices.json", 'w', encoding='utf-8') as f:
