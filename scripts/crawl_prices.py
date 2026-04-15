@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-原材料价格爬虫 - 增强版
-支持：随机UA、随机延时、多轮重试、失败降级
+原材料价格爬虫 - 完整版
+支持：历史数据追加、随机UA、重试机制
 """
 
 import requests
@@ -26,14 +26,12 @@ USER_AGENTS = [
 ]
 
 def get_headers():
-    """生成随机请求头"""
     return {
         'User-Agent': random.choice(USER_AGENTS),
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
         'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
-        'Cache-Control': 'max-age=0',
     }
 
 SOURCES = {
@@ -48,34 +46,27 @@ SOURCES = {
 }
 
 def fetch(url, max_retries=3):
-    """获取网页内容 - 带重试机制"""
     for attempt in range(max_retries):
         try:
-            # 随机延时 1-3 秒
             delay = random.uniform(1, 3)
             time.sleep(delay)
-            
             headers = get_headers()
             response = requests.get(url, headers=headers, timeout=30)
             response.encoding = 'utf-8'
-            
             if response.status_code == 200:
                 return response.text
             elif response.status_code == 403:
-                print(f"    ⚠️ 403被拦截，尝试更换UA重试... (尝试 {attempt+1}/{max_retries})")
-                time.sleep(random.uniform(2, 5))  # 被拦截时等待更久
+                print(f"    ⚠️ 403被拦截，重试中... ({attempt+1}/{max_retries})")
+                time.sleep(random.uniform(2, 5))
             else:
                 print(f"    ✗ HTTP {response.status_code}")
-                
         except requests.exceptions.Timeout:
-            print(f"    ⚠️ 超时，重试中... (尝试 {attempt+1}/{max_retries})")
+            print(f"    ⚠️ 超时，重试中... ({attempt+1}/{max_retries})")
         except Exception as e:
             print(f"    ✗ 请求失败: {e}")
-            
     return None
 
 def parse_copper(html):
-    """解析铜价"""
     prices = re.findall(r'>([7-9]\d{4})<', html)
     changes = re.findall(r'>([+-]\d+)<', html)
     if len(prices) >= 3:
@@ -88,7 +79,6 @@ def parse_copper(html):
     return None
 
 def parse_aluminum(html):
-    """解析铝价"""
     prices = re.findall(r'>(2[4-5]\d{3})<', html)
     if prices:
         price = float(prices[0])
@@ -96,7 +86,6 @@ def parse_aluminum(html):
     return None
 
 def parse_silicon_steel(html, keywords):
-    """解析硅钢价格"""
     for keyword in keywords:
         pos = html.find(keyword)
         if pos >= 0:
@@ -112,70 +101,97 @@ def parse_silicon_steel(html, keywords):
     return None
 
 def parse_rare_earth(html):
-    """解析稀土价格 - 支持各种价位"""
-    # 尝试匹配价格范围格式：6070 - 6100
     price_match = re.search(r'(\d{3,6})\s*-\s*(\d{3,6})', html)
     if price_match:
         low = float(price_match.group(1))
         high = float(price_match.group(2))
         price = (low + high) / 2
-        
-        # 尝试找涨跌
         change_match = re.search(r'>([+-]\d+)<', html)
         change = float(change_match.group(1)) if change_match else 0
-        
-        return {
-            'price': price,
-            'change': change,
-            'low': low,
-            'high': high
-        }
-    
-    # 备用：匹配单个价格
+        return {'price': price, 'change': change, 'low': low, 'high': high}
     prices = re.findall(r'>(\d{3,6})<', html)
     if len(prices) >= 1:
         price = float(prices[0])
-        return {
-            'price': price,
-            'change': 0,
-            'low': price,
-            'high': price
-        }
+        return {'price': price, 'change': 0, 'low': price, 'high': price}
     return None
 
-def load_history():
-    """加载历史数据"""
+def load_data():
+    """加载完整数据（包含history）"""
     prices_file = DATA_DIR / "prices.json"
     if prices_file.exists():
         with open(prices_file, 'r', encoding='utf-8') as f:
             try:
                 data = json.load(f)
-                if isinstance(data, dict) and 'today' in data:
+                if isinstance(data, dict):
+                    if 'history' not in data:
+                        data['history'] = {}
+                    if 'today' not in data:
+                        data['today'] = []
                     return data
             except:
                 pass
-    return {'update_time': '', 'today': []}
+    return {'update_time': '', 'today': [], 'history': {}}
 
-def get_last_price(code, history):
-    """获取某个材料的上次价格"""
-    if history and 'today' in history:
-        for item in history['today']:
-            if item['code'] == code:
-                return {
-                    'price': item['price'],
-                    'change': item.get('change', 0),
-                    'low': item['price'],
-                    'high': item['price']
-                }
+def get_last_price(code, data):
+    """从历史数据获取最近一次价格"""
+    history = data.get('history', {}).get(code, [])
+    if history:
+        return {
+            'price': history[0]['price'],
+            'change': 0,
+            'low': history[0]['price'],
+            'high': history[0]['price']
+        }
+    # 从today获取
+    for item in data.get('today', []):
+        if item['code'] == code:
+            return {
+                'price': item['price'],
+                'change': item.get('change', 0),
+                'low': item['price'],
+                'high': item['price']
+            }
     return None
 
-def save_data(results, history):
-    """保存数据到JSON - 兼容原有格式"""
+def append_to_history(data, results, today_str):
+    """将今日数据追加到历史记录"""
+    history = data.get('history', {})
+    
+    for code, price_data in results.items():
+        if not price_data:
+            continue
+            
+        if code not in history:
+            history[code] = []
+        
+        # 检查今天是否已有记录
+        today_exists = any(h['date'] == today_str for h in history[code])
+        
+        if not today_exists:
+            # 插入到开头（最新的在前面）
+            history[code].insert(0, {
+                'date': today_str,
+                'price': price_data['price']
+            })
+            print(f"    ✓ {code}: 已追加到历史记录")
+        else:
+            # 更新今天的记录
+            for h in history[code]:
+                if h['date'] == today_str:
+                    h['price'] = price_data['price']
+                    break
+            print(f"    ✓ {code}: 已更新今日记录")
+    
+    data['history'] = history
+    return data
+
+def save_data(results, data):
+    """保存数据"""
     today = datetime.now().strftime('%Y-%m-%d')
     now = datetime.now()
     
-    # 更新update_time
-    history['update_time'] = now.strftime('%Y-%m-%d %H:%M')
+    # 更新时间
+    data['update_time'] = now.strftime('%Y-%m-%d %H:%M')
     
     # 材料名称映射
     material_names = {
@@ -194,46 +210,49 @@ def save_data(results, history):
         'DYFE': '镝铁合金'
     }
     
-    # 构建新的today数组
-    today_data = []
-    for code, data in results.items():
-        today_data.append({
-            'code': code,
-            'name': material_names.get(code, code),
-            'price': data['price'],
-            'change': data.get('change', 0),
-            'date': today
-        })
+    # 追加到历史记录
+    data = append_to_history(data, results, today)
     
-    history['today'] = today_data
+    # 构建today数组
+    today_data = []
+    for code, price_data in results.items():
+        if price_data:
+            today_data.append({
+                'code': code,
+                'name': material_names.get(code, code),
+                'price': price_data['price'],
+                'change': price_data.get('change', 0),
+                'date': today
+            })
+    
+    data['today'] = today_data
     
     # 保存
     with open(DATA_DIR / "prices.json", 'w', encoding='utf-8') as f:
-        json.dump(history, f, ensure_ascii=False, indent=2)
+        json.dump(data, f, ensure_ascii=False, indent=2)
     
-    print(f"\n✓ 数据已保存到 data/prices.json")
-    return history
+    print(f"\n✓ 数据已保存")
+    return data
 
 def main():
     print("=" * 60)
-    print("原材料价格爬虫 - 增强版")
+    print("原材料价格爬虫 - 完整版")
     print(f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 60)
     
     results = {}
-    history = load_history()
+    data = load_data()
     
     # 1. 电解铜
     print("\n1. 电解铜 (CU)...")
     html = fetch(SOURCES['CU'])
     if html:
-        data = parse_copper(html)
-        if data:
-            results['CU'] = data
-            print(f"  ✓ CU: {data['price']:,.0f} ({data['change']:+.0f})")
+        result = parse_copper(html)
+        if result:
+            results['CU'] = result
+            print(f"  ✓ CU: {result['price']:,.0f} ({result['change']:+.0f})")
         else:
-            # 使用上次数据
-            last = get_last_price('CU', history)
+            last = get_last_price('CU', data)
             if last:
                 results['CU'] = last
                 print(f"  ⚠ CU: 使用上次数据 {last['price']:,.0f}")
@@ -242,31 +261,31 @@ def main():
     print("\n2. ADC12...")
     html = fetch(SOURCES['ADC12'])
     if html:
-        data = parse_aluminum(html)
-        if data:
-            results['ADC12'] = data
-            print(f"  ✓ ADC12: {data['price']:,.0f}")
+        result = parse_aluminum(html)
+        if result:
+            results['ADC12'] = result
+            print(f"  ✓ ADC12: {result['price']:,.0f}")
         else:
-            last = get_last_price('ADC12', history)
+            last = get_last_price('ADC12', data)
             if last:
                 results['ADC12'] = last
-                print(f"  ⚠ ADC12: 使用上次数据 {last['price']:,.0f}")
+                print(f"  ⚠ ADC12: 使用上次数据")
     
     # 3. 6063铝棒
     print("\n3. 6063铝棒...")
     html = fetch(SOURCES['AL6063'])
     if html:
-        data = parse_aluminum(html)
-        if data:
-            results['AL6063'] = data
-            print(f"  ✓ AL6063: {data['price']:,.0f}")
+        result = parse_aluminum(html)
+        if result:
+            results['AL6063'] = result
+            print(f"  ✓ AL6063: {result['price']:,.0f}")
         else:
-            last = get_last_price('AL6063', history)
+            last = get_last_price('AL6063', data)
             if last:
                 results['AL6063'] = last
-                print(f"  ⚠ AL6063: 使用上次数据 {last['price']:,.0f}")
+                print(f"  ⚠ AL6063: 使用上次数据")
     
-    # 4. 硅钢-上海（宝钢系列）
+    # 4. 硅钢
     print("\n4. 硅钢-上海（宝钢系列）...")
     html = fetch(SOURCES['SI_SH'])
     if html:
@@ -278,17 +297,17 @@ def main():
             'B50A600': ['B50A600', 'B50A6'],
         }
         for brand, keywords in brands.items():
-            data = parse_silicon_steel(html, keywords)
-            if data:
-                results[brand] = data
-                print(f"  ✓ {brand}: {data['price']:,.0f}")
+            result = parse_silicon_steel(html, keywords)
+            if result:
+                results[brand] = result
+                print(f"  ✓ {brand}: {result['price']:,.0f}")
             else:
-                last = get_last_price(brand, history)
+                last = get_last_price(brand, data)
                 if last:
                     results[brand] = last
-                    print(f"  ⚠ {brand}: 使用上次数据 {last['price']:,.0f}")
+                    print(f"  ⚠ {brand}: 使用上次数据")
     
-    # 5. 稀土系列
+    # 5. 稀土
     print("\n5. 稀土系列...")
     for code, url in [
         ('REO', 'https://hq.smm.cn/h5/praseodymium-neodymium-oxide-price'),
@@ -299,48 +318,36 @@ def main():
         print(f"  {code}...")
         html = fetch(url)
         if html:
-            data = parse_rare_earth(html)
-            if data:
-                results[code] = data
-                print(f"    ✓ {code}: {data['price']:,.0f}")
+            result = parse_rare_earth(html)
+            if result:
+                results[code] = result
+                print(f"    ✓ {code}: {result['price']:,.0f}")
             else:
-                last = get_last_price(code, history)
+                last = get_last_price(code, data)
                 if last:
                     results[code] = last
-                    print(f"    ⚠ {code}: 使用上次数据 {last['price']:,.0f}")
+                    print(f"    ⚠ {code}: 使用上次数据")
         else:
-            last = get_last_price(code, history)
+            last = get_last_price(code, data)
             if last:
                 results[code] = last
-                print(f"    ⚠ {code}: 获取失败，使用上次数据 {last['price']:,.0f}")
+                print(f"    ⚠ {code}: 获取失败，使用上次数据")
     
-    # 6. 镝铁合金（SMM网页端不可用）
+    # 6. 镝铁合金
     print("\n6. 镝铁合金...")
-    last = get_last_price('DYFE', history)
+    last = get_last_price('DYFE', data)
     if last:
         results['DYFE'] = last
-        print(f"  ⚠ DYFE: SMM网页端无数据，使用上次数据 {last['price']:,.0f}")
-    else:
-        print("  ⚠ DYFE: 无历史数据，请从APP手动录入")
+        print(f"  ⚠ DYFE: SMM网页端无数据，使用上次数据")
     
-    # 保存数据
+    # 保存
     print("\n" + "=" * 60)
-    success_count = len([r for r in results.values() if r])
-    print(f"爬取完成: {success_count}/13 种材料成功获取数据")
+    success = len([r for r in results.values() if r])
+    print(f"爬取完成: {success}/13 种材料")
     print("=" * 60)
     
     if results:
-        save_data(results, history)
-        
-        # 同时生成今日快照
-        snapshot = {
-            'date': datetime.now().strftime('%Y-%m-%d'),
-            'update_time': datetime.now().strftime('%H:%M:%S'),
-            'materials': results
-        }
-        with open(DATA_DIR / "today.json", 'w', encoding='utf-8') as f:
-            json.dump(snapshot, f, ensure_ascii=False, indent=2)
-        
+        save_data(results, data)
         return 0
     else:
         print("✗ 未获取到任何数据")
