@@ -55,37 +55,62 @@ def fetch(url, code):
 def parse_copper(html):
     print(f"    解析铜价...")
     
+    # 方式1：查找所有5位数字，过滤70000-100000范围
     all_prices = re.findall(r'>(\d{5})<', html)
-    print(f"    方式1: 找到 {len(all_prices)} 个5位数字")
-    
     copper_prices = [p for p in all_prices if 70000 <= int(p) <= 100000]
     print(f"    方式1: 找到 {len(copper_prices)} 个铜价: {copper_prices[:10]}")
     
     if len(copper_prices) >= 3:
+        # 取最后一个（最新的）
+        price = float(copper_prices[-1])
         return {
-            'price': float(copper_prices[-1]),
+            'price': price,
             'change': 0,
             'low': float(copper_prices[0]),
             'high': float(copper_prices[-1])
         }
     
+    # 方式2：查找data-price属性
     data_prices = re.findall(r'data-price="(\d+)"', html)
-    print(f"    方式2: data-price: {data_prices[:10]}")
-    
     data_copper = [p for p in data_prices if 70000 <= int(p) <= 100000]
+    print(f"    方式2: data-price匹配到 {len(data_copper)} 个铜价")
+    
     if data_copper:
+        price = float(data_copper[0])
         return {
-            'price': float(data_copper[0]),
+            'price': price,
             'change': 0,
-            'low': float(data_copper[0]),
-            'high': float(data_copper[0])
+            'low': price,
+            'high': price
         }
     
-    price_text = re.findall(r'(\d{5})\s*元', html)
-    print(f"    方式3: 价格文本: {price_text[:10]}")
+    # 方式3：关键词+精确匹配（只匹配以7/8/9/10开头的5-6位数字，避免匹配到0开头的数字）
+    # 使用更精确的正则：[789]\d{4} 或 10\d{4}
+    keyword_prices = re.findall(r'(现货均价|现货|均价)[^>]*>([789]\d{4}|10\d{4})<', html)
+    if keyword_prices:
+        print(f"    方式3: 关键词匹配: {keyword_prices}")
+        price = float(keyword_prices[0][1])
+        if 70000 <= price <= 100000:
+            return {'price': price, 'change': 0, 'low': price, 'high': price}
     
-    if price_text:
-        price = float(price_text[0])
+    # 方式4：精确格式"元/吨"（同样只匹配7-10万的数字）
+    precise_prices = re.findall(r'>([789]\d{4}|10\d{4})\s*元/吨', html)
+    print(f"    方式4: 精确格式: {precise_prices[:10]}")
+    
+    if precise_prices:
+        price = float(precise_prices[0])
+        if 70000 <= price <= 100000:
+            return {'price': price, 'change': 0, 'low': price, 'high': price}
+    
+    # 方式5：更宽松的匹配，查找所有数字后手动过滤
+    all_digits = re.findall(r'>(\d{5,6})<', html)
+    print(f"    方式5: 找到 {len(all_digits)} 个5-6位数字")
+    # 过滤掉明显的小数字（如2950、3100等）和超大数字
+    filtered = [p for p in all_digits if 70000 <= int(p) <= 100000]
+    print(f"    方式5: 过滤后 {len(filtered)} 个铜价: {filtered}")
+    
+    if filtered:
+        price = float(filtered[-1])
         return {'price': price, 'change': 0, 'low': price, 'high': price}
     
     print(f"    ✗ 铜价解析失败")
@@ -129,7 +154,7 @@ def parse_silicon_steel(html):
             pos = html.find(keyword)
             if pos >= 0:
                 segment = html[pos:pos+800]
-                match = re.search(r'<span[^>]*>([4-6]\d{3})</span>', segment)
+                match = re.search(r'<span[^>*>([4-6]\d{3})</span>', segment)
                 if match:
                     print(f"        ✓ 方式1: {match.group(1)}")
                     results[brand] = {'price': float(match.group(1)), 'change': 0, 'low': float(match.group(1)), 'high': float(match.group(1))}
@@ -187,7 +212,22 @@ def load_data():
                 pass
     return {'update_time': '', 'today': [], 'history': {}}
 
+def get_last_price(code, data):
+    history = data.get('history', {}).get(code, [])
+    if history:
+        return {
+            'price': history[0]['price'],
+            'change': 0,
+            'low': history[0]['price'],
+            'high': history[0]['price']
+        }
+    return None
+
 def append_to_history(data, results, today_str):
+    """
+    将当天数据追加到历史记录。
+    如果当天已有记录，删除旧记录，插入新记录（实现多次刷新更新为最新价格）。
+    """
     history = data.get('history', {})
     
     for code, price_data in results.items():
@@ -197,8 +237,17 @@ def append_to_history(data, results, today_str):
         if code not in history:
             history[code] = []
         
-        if not any(h['date'] == today_str for h in history[code]):
-            history[code].insert(0, {'date': today_str, 'price': price_data['price']})
+        # 检查当天是否已有记录
+        # 找到同一天的所有记录索引
+        same_day_indices = [i for i, h in enumerate(history[code]) if h['date'] == today_str]
+        
+        if same_day_indices:
+            # 删除同一天的所有旧记录
+            for idx in sorted(same_day_indices, reverse=True):
+                del history[code][idx]
+        
+        # 在开头插入新的当天记录
+        history[code].insert(0, {'date': today_str, 'price': price_data['price']})
     
     data['history'] = history
     return data
@@ -240,7 +289,7 @@ def save_data(results, data):
 
 def main():
     print("=" * 70)
-    print("原材料价格爬虫 - 增强版")
+    print("原材料价格爬虫 - 修复版 v3")
     print(f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     
@@ -302,8 +351,14 @@ def main():
         print(f"    ✗ 硅钢获取失败")
     
     print(f"\n镝铁合金...")
-    results['DYFE'] = None
-    print(f"    ⚠ SMM网页端无数据")
+    print(f"    ⚠ SMM网页端无数据，使用历史数据")
+    last_dyfe = get_last_price('DYFE', data)
+    if last_dyfe:
+        results['DYFE'] = last_dyfe
+        print(f"    ✓ DYFE: {last_dyfe['price']:,.0f}（历史数据）")
+    else:
+        results['DYFE'] = None
+        print(f"    ✗ DYFE: 无历史数据")
     
     success = len([r for r in results.values() if r is not None])
     print(f"\n{'='*70}")
