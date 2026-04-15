@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-原材料价格爬虫 - 调试版
-"""
-
 import requests
 import re
 import json
@@ -40,7 +36,7 @@ SOURCES = {
 def fetch(url, code):
     print(f"    请求: {url}")
     
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             time.sleep(random.uniform(1, 2))
             response = requests.get(url, headers=get_headers(), timeout=30)
@@ -57,25 +53,67 @@ def fetch(url, code):
     return None
 
 def parse_copper(html):
-    prices = re.findall(r'>([7-9]\d{4})<', html)
-    changes = re.findall(r'>([+-]\d+)<', html)
-    if len(prices) >= 3:
+    print(f"    解析铜价...")
+    
+    all_prices = re.findall(r'>(\d{5})<', html)
+    print(f"    方式1: 找到 {len(all_prices)} 个5位数字")
+    
+    copper_prices = [p for p in all_prices if 70000 <= int(p) <= 100000]
+    print(f"    方式1: 找到 {len(copper_prices)} 个铜价: {copper_prices[:10]}")
+    
+    if len(copper_prices) >= 3:
         return {
-            'price': float(prices[2]),
-            'change': float(changes[0]) if changes else 0,
-            'low': float(prices[0]),
-            'high': float(prices[1])
+            'price': float(copper_prices[-1]),
+            'change': 0,
+            'low': float(copper_prices[0]),
+            'high': float(copper_prices[-1])
         }
+    
+    data_prices = re.findall(r'data-price="(\d+)"', html)
+    print(f"    方式2: data-price: {data_prices[:10]}")
+    
+    data_copper = [p for p in data_prices if 70000 <= int(p) <= 100000]
+    if data_copper:
+        return {
+            'price': float(data_copper[0]),
+            'change': 0,
+            'low': float(data_copper[0]),
+            'high': float(data_copper[0])
+        }
+    
+    price_text = re.findall(r'(\d{5})\s*元', html)
+    print(f"    方式3: 价格文本: {price_text[:10]}")
+    
+    if price_text:
+        price = float(price_text[0])
+        return {'price': price, 'change': 0, 'low': price, 'high': price}
+    
+    print(f"    ✗ 铜价解析失败")
     return None
 
 def parse_aluminum(html):
+    print(f"    解析铝价...")
+    
     prices = re.findall(r'>(2[4-5]\d{3})<', html)
     if prices:
+        print(f"    ✓ 方式1: {prices[0]}")
         price = float(prices[0])
         return {'price': price, 'change': 0, 'low': price, 'high': price}
+    
+    all_prices = re.findall(r'>(\d{5})<', html)
+    al_prices = [p for p in all_prices if 20000 <= int(p) <= 30000]
+    print(f"    方式2: 找到 {len(al_prices)} 个铝价: {al_prices}")
+    
+    if al_prices:
+        price = float(al_prices[0])
+        return {'price': price, 'change': 0, 'low': price, 'high': price}
+    
+    print(f"    ✗ 铝价解析失败")
     return None
 
 def parse_silicon_steel(html):
+    print(f"    解析硅钢...")
+    
     brands = {
         'B35A300': ['B35A300', 'B35A'],
         'B50A310': ['B50A310', 'B50A3'],
@@ -83,34 +121,54 @@ def parse_silicon_steel(html):
         'B50A470': ['B50A470', 'B50A4'],
         'B50A600': ['B50A600', 'B50A6'],
     }
+    
     results = {}
     for brand, keywords in brands.items():
+        print(f"      {brand}...")
         for keyword in keywords:
             pos = html.find(keyword)
             if pos >= 0:
-                segment = html[pos:pos+500]
-                match = re.search(r'<span>([4-6]\d{3})</span>', segment)
+                segment = html[pos:pos+800]
+                match = re.search(r'<span[^>]*>([4-6]\d{3})</span>', segment)
                 if match:
+                    print(f"        ✓ 方式1: {match.group(1)}")
                     results[brand] = {'price': float(match.group(1)), 'change': 0, 'low': float(match.group(1)), 'high': float(match.group(1))}
                     break
+                
                 prices = re.findall(r'>([4-6]\d{3})<', segment)
                 if prices:
+                    print(f"        ✓ 方式2: {prices[0]}")
                     results[brand] = {'price': float(prices[0]), 'change': 0, 'low': float(prices[0]), 'high': float(prices[0])}
                     break
+    
+    if results:
+        print(f"    ✓ 硅钢: {len(results)} 个品牌")
+    else:
+        print(f"    ✗ 硅钢解析失败")
+    
     return results if results else None
 
 def parse_rare_earth(html):
-    price_match = re.search(r'(\d{3,6})\s*[-～]\s*(\d{3,6})', html)
+    print(f"    解析稀土...")
+    
+    price_match = re.search(r'(\d{3,6})\s*[-～—]\s*(\d{3,6})', html)
     if price_match:
         low = float(price_match.group(1))
         high = float(price_match.group(2))
         price = (low + high) / 2
-        change_match = re.search(r'>([+-]\d+)<', html)
-        change = float(change_match.group(1)) if change_match else 0
-        return {'price': price, 'change': change, 'low': low, 'high': high}
-    prices = re.findall(r'>(\d{3,6})<', html)
-    if prices:
-        return {'price': float(prices[0]), 'change': 0, 'low': float(prices[0]), 'high': float(prices[0])}
+        print(f"    ✓ 方式1: {low}-{high} = {price}")
+        return {'price': price, 'change': 0, 'low': low, 'high': high}
+    
+    all_prices = re.findall(r'>(\d{3,6})<', html)
+    print(f"    方式2: 找到 {len(all_prices)} 个数字")
+    
+    rare_prices = [p for p in all_prices if 3000 <= int(p) <= 2000000]
+    if rare_prices:
+        print(f"    ✓ 方式2: {rare_prices[0]}")
+        price = float(rare_prices[0])
+        return {'price': price, 'change': 0, 'low': price, 'high': price}
+    
+    print(f"    ✗ 稀土解析失败")
     return None
 
 def load_data():
@@ -129,6 +187,22 @@ def load_data():
                 pass
     return {'update_time': '', 'today': [], 'history': {}}
 
+def append_to_history(data, results, today_str):
+    history = data.get('history', {})
+    
+    for code, price_data in results.items():
+        if price_data is None:
+            continue
+        
+        if code not in history:
+            history[code] = []
+        
+        if not any(h['date'] == today_str for h in history[code]):
+            history[code].insert(0, {'date': today_str, 'price': price_data['price']})
+    
+    data['history'] = history
+    return data
+
 def save_data(results, data):
     today = datetime.now().strftime('%Y-%m-%d')
     now = datetime.now()
@@ -143,19 +217,7 @@ def save_data(results, data):
         'DYFE': '镝铁合金'
     }
     
-    history = data.get('history', {})
-    
-    for code, price_data in results.items():
-        if price_data is None:
-            continue
-        
-        if code not in history:
-            history[code] = []
-        
-        if not any(h['date'] == today for h in history[code]):
-            history[code].insert(0, {'date': today, 'price': price_data['price']})
-    
-    data['history'] = history
+    data = append_to_history(data, results, today)
     
     today_data = []
     for code, price_data in results.items():
@@ -178,7 +240,7 @@ def save_data(results, data):
 
 def main():
     print("=" * 70)
-    print("原材料价格爬虫 - 调试版")
+    print("原材料价格爬虫 - 增强版")
     print(f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     
@@ -186,9 +248,9 @@ def main():
     data = load_data()
     
     for code, url in [
-        ('CU', 'https://hq.smm.cn/h5/cu-price'),
-        ('ADC12', 'https://hq.smm.cn/h5/aluminum-alloy-price'),
-        ('AL6063', 'https://hq.smm.cn/h5/aluminum-alloy-price'),
+        ('CU', SOURCES['CU']),
+        ('ADC12', SOURCES['ADC12']),
+        ('AL6063', SOURCES['AL6063']),
     ]:
         print(f"\n{code}...")
         html = fetch(url, code)
@@ -209,10 +271,10 @@ def main():
             print(f"    ✗ {code}: 获取失败")
     
     for code, url in [
-        ('REO', 'https://hq.smm.cn/h5/praseodymium-neodymium-oxide-price'),
-        ('REN', 'https://hq.smm.cn/h5/praseodymium-neodymium-metal-price'),
-        ('TB', 'https://hq.smm.cn/h5/terbium-metal-price'),
-        ('CE', 'https://hq.smm.cn/h5/cerium-metal-price'),
+        ('REO', SOURCES['REO']),
+        ('REN', SOURCES['REN']),
+        ('TB', SOURCES['TB']),
+        ('CE', SOURCES['CE']),
     ]:
         print(f"\n{code}...")
         html = fetch(url, code)
@@ -229,16 +291,15 @@ def main():
             print(f"    ✗ {code}: 获取失败")
     
     print(f"\n硅钢...")
-    html = fetch('https://hq.smm.cn/h5/SiFe-shanghai-price', 'SI_SH')
+    html = fetch(SOURCES['SI_SH'], 'SI_SH')
     if html:
         silicon_results = parse_silicon_steel(html)
         if silicon_results:
             results.update(silicon_results)
-            print(f"    ✓ 硅钢: {len(silicon_results)} 个品牌")
         else:
-            print(f"    ✗ 硅钢: 解析失败")
+            print(f"    ✗ 硅钢解析失败")
     else:
-        print(f"    ✗ 硅钢: 获取失败")
+        print(f"    ✗ 硅钢获取失败")
     
     print(f"\n镝铁合金...")
     results['DYFE'] = None
