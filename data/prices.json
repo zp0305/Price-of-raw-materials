@@ -1,6 +1,13 @@
 {
-  "update_time": "2026-04-15 18:18",
+  "update_time": "2026-04-15 19:16",
   "today": [
+    {
+      "code": "CU",
+      "name": "电解铜",
+      "price": 2950.0,
+      "change": 0,
+      "date": "2026-04-15"
+    },
     {
       "code": "ADC12",
       "name": "ADC12",
@@ -19,14 +26,14 @@
       "code": "REO",
       "name": "镨钕氧化物",
       "price": 777500.0,
-      "change": 15000.0,
+      "change": 0,
       "date": "2026-04-15"
     },
     {
       "code": "REN",
       "name": "镨钕金属",
       "price": 942500.0,
-      "change": 17500.0,
+      "change": 0,
       "date": "2026-04-15"
     },
     {
