@@ -53,18 +53,24 @@ def fetch(url, code):
     
     return None
 
-def parse_table_price(html, keyword, price_range=None):
+def parse_table_price(html, keywords, price_range=None):
     """
     通用表格价格解析函数
     查找包含关键词的表格行，提取价格范围和均价
     
+    keywords: 字符串或字符串列表，用于匹配表格行
     price_range: (min_price, max_price) - 价格范围过滤，可选
     """
+    # 统一转换为列表格式
+    if isinstance(keywords, str):
+        keywords = [keywords]
+    
     lines = html.split('\n')
     
-    # 查找包含关键词的行
+    # 查找包含所有关键词的行
     for i, line in enumerate(lines):
-        if keyword in line:
+        # 检查是否包含所有关键词
+        if all(kw in line for kw in keywords):
             # 找到这一行后，往后几行查找价格数据
             table_lines = lines[i:i+20]
             text = '\n'.join(table_lines)
