@@ -12,6 +12,9 @@ const materialCategories = {
     'REO': 'rare', 'REN': 'rare', 'TB': 'rare', 'CE': 'rare', 'DYFE': 'rare'
 };
 
+// 稀土材料编码集合（用于判断显示单位）
+const rareEarthCodes = new Set(['REO', 'REN', 'TB', 'CE', 'DYFE']);
+
 // 初始化
 async function init() {
     await loadData();
@@ -85,10 +88,16 @@ function renderCards() {
     
     const cards = priceData.today.map(m => {
         const category = materialCategories[m.code] || 'all';
+        const isRare = rareEarthCodes.has(m.code);
         const changeClass = m.change > 0 ? 'text-red-500' : m.change < 0 ? 'text-green-500' : 'text-gray-400';
         const bgClass = m.change > 0 ? 'border-l-red-400' : m.change < 0 ? 'border-l-green-400' : 'border-l-gray-300';
         const arrow = m.change > 0 ? '↑' : m.change < 0 ? '↓' : '—';
         const isActive = m.code === currentMaterial ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md';
+        const priceStr = isRare ? (m.price / 10000).toFixed(2) : m.price.toLocaleString();
+        const unit = isRare ? '万元/吨' : '元/吨';
+        const changeDisplay = isRare
+            ? (m.change !== 0 ? (m.change / 10000).toFixed(2) : '0.00')
+            : Math.abs(m.change).toLocaleString();
         
         return `
             <div class="price-card bg-white rounded-xl p-4 border-l-4 ${bgClass} shadow-sm cursor-pointer transition-all ${isActive}" 
@@ -99,13 +108,13 @@ function renderCards() {
                     <span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">${m.code}</span>
                 </div>
                 <div class="text-2xl font-bold text-gray-900 mb-1">
-                    ${formatPrice(m.price)}
+                    ${priceStr}
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-sm ${changeClass} font-semibold">
-                        ${arrow} ${Math.abs(m.change).toLocaleString()}
+                        ${arrow} ${changeDisplay}
                     </span>
-                    <span class="text-xs text-gray-400">元/吨</span>
+                    <span class="text-xs text-gray-400">${unit}</span>
                 </div>
             </div>
         `;
@@ -170,7 +179,7 @@ function renderChart() {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' 元/吨';
+                            return context.dataset.label + ': ' + formatPrice(context.parsed.y, currentMaterial);
                         }
                     }
                 }
@@ -253,12 +262,18 @@ function renderHistoryTable() {
         const changePercent = prev ? ((change / prev.price) * 100).toFixed(2) : '0.00';
         const changeClass = change > 0 ? 'text-red-500' : change < 0 ? 'text-green-500' : 'text-gray-400';
         const sign = change > 0 ? '+' : '';
+        const isRare = rareEarthCodes.has(currentMaterial);
+        const priceStr = isRare ? (h.price / 10000).toFixed(2) : h.price.toLocaleString();
+        const changeStr = isRare
+            ? (change !== 0 ? (change / 10000).toFixed(2) : '0.00')
+            : change.toLocaleString();
+        const unit = isRare ? '万元/吨' : '元/吨';
         
         return `
             <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-3 text-gray-700">${h.date}</td>
-                <td class="px-4 py-3 text-right font-mono font-semibold">${h.price.toLocaleString()}</td>
-                <td class="px-4 py-3 text-right ${changeClass}">${sign}${change.toLocaleString()}</td>
+                <td class="px-4 py-3 text-right font-mono font-semibold">${priceStr} <span class="text-xs text-gray-400">${unit}</span></td>
+                <td class="px-4 py-3 text-right ${changeClass}">${sign}${changeStr}</td>
                 <td class="px-4 py-3 text-right ${changeClass}">${sign}${changePercent}%</td>
             </tr>
         `;
@@ -306,12 +321,12 @@ function exportCSV() {
     link.click();
 }
 
-// 格式化价格
-function formatPrice(price) {
-    if (price >= 10000) {
-        return (price / 10000).toFixed(2) + '万';
+// 格式化价格（用于图表tooltip等通用场景）
+function formatPrice(price, code) {
+    if (code && rareEarthCodes.has(code)) {
+        return (price / 10000).toFixed(2) + ' 万元/吨';
     }
-    return price.toLocaleString();
+    return price.toLocaleString() + ' 元/吨';
 }
 
 // 更新时间戳

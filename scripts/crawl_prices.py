@@ -373,6 +373,14 @@ def append_to_history(data, results, today_str):
     data['history'] = history
     return data
 
+def calc_change(code, price, data):
+    """根据历史记录计算今日相较于最近一条记录的涨跌"""
+    history = data.get('history', {}).get(code, [])
+    if history:
+        last_price = round(history[0]['price'])
+        return round(price) - last_price
+    return 0
+
 def save_data(results, data):
     today = datetime.now().strftime('%Y-%m-%d')
     now = datetime.now()
@@ -387,16 +395,22 @@ def save_data(results, data):
         'DYFE': '镝铁合金'
     }
     
+    # 写入前统一取整
+    for code in results:
+        if results[code] is not None:
+            results[code]['price'] = round(results[code]['price'])
+    
     data = append_to_history(data, results, today)
     
     today_data = []
     for code, price_data in results.items():
         if price_data is not None:
+            change = calc_change(code, price_data['price'], data)
             today_data.append({
                 'code': code,
                 'name': material_names.get(code, code),
                 'price': price_data['price'],
-                'change': price_data.get('change', 0),
+                'change': change,
                 'date': today
             })
     
