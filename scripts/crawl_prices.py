@@ -12,14 +12,43 @@ DATA_DIR.mkdir(exist_ok=True)
 
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:119.0) Gecko/20100101 Firefox/119.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0',
 ]
+
+session = requests.Session()
+
+PRICE_RANGES = {
+    'CU': (95000, 110000),
+    'ADC12': (18000, 35000),
+    'AL6063': (20000, 30000),
+    'B35A300': (3500, 8000),
+    'B50A310': (3500, 8000),
+    'B50A350': (3500, 8000),
+    'B50A470': (3500, 8000),
+    'B50A600': (3500, 8000),
+    'REO': (600000, 900000),
+    'REN': (900000, 1000000),
+    'TB': (5000, 9000),
+    'CE': (30000, 40000),
+    'DYFE': (1300000, 1400000),
+}
 
 def get_headers():
     return {
         'User-Agent': random.choice(USER_AGENTS),
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Referer': 'https://hq.smm.cn/',
+        'Cache-Control': 'max-age=0',
+        'DNT': '1',
+        'Connection': 'keep-alive',
     }
 
 SOURCES = {
@@ -36,65 +65,67 @@ SOURCES = {
 
 def fetch(url, code):
     print(f"    请求: {url}")
-    
-    for attempt in range(2):
+    max_retries = 3
+
+    for attempt in range(max_retries):
         try:
-            time.sleep(random.uniform(1, 2))
-            response = requests.get(url, headers=get_headers(), timeout=30)
+            wait = random.uniform(1.5, 3.5) * (attempt + 1)
+            time.sleep(wait)
+            response = session.get(url, headers=get_headers(), timeout=30)
             print(f"    状态: {response.status_code}, 长度: {len(response.text)}")
-            
+
             if response.status_code == 200 and len(response.text) > 1000:
                 return response.text
             elif response.status_code == 403:
                 print(f"    ⚠️ 403被拦截")
-                time.sleep(random.uniform(2, 4))
+                time.sleep(random.uniform(3, 6))
         except Exception as e:
             print(f"    ✗ 错误: {e}")
-    
+
     return None
 
-def parse_table_price(html, keywords, price_range=None):
+def parse_table_price(html, keywords, price_range=None, backup_pattern=None):
     """
     通用表格价格解析函数
     查找包含关键词的表格行，提取价格范围和均价
-    
+
     keywords: 字符串或字符串列表，用于匹配表格行
     price_range: (min_price, max_price) - 价格范围过滤，可选
+    backup_pattern: 正则备用模式（当主路径失败时的后备）
     """
-    # 统一转换为列表格式
     if isinstance(keywords, str):
         keywords = [keywords]
-    
+
     lines = html.split('\n')
-    
-    # 查找包含所有关键词的行
+
     for i, line in enumerate(lines):
-        # 检查是否包含所有关键词
         if all(kw in line for kw in keywords):
-            # 找到这一行后，往后几行查找价格数据
             table_lines = lines[i:i+20]
             text = '\n'.join(table_lines)
-            
-            # 查找所有5-7位数字（价格）
+
             prices = re.findall(r'(\d{5,7})', text)
-            
-            # 过滤价格范围
+
             if price_range:
                 min_p, max_p = price_range
                 prices = [p for p in prices if min_p <= int(p) <= max_p]
-            
+
             if prices:
-                # 如果有多个价格，取中间值作为均价
                 avg_price = sum(int(p) for p in prices) / len(prices)
                 return avg_price
-    
+
+    if backup_pattern:
+        match = re.search(backup_pattern, html)
+        if match:
+            price = float(match.group(1))
+            if not price_range or price_range[0] <= price <= price_range[1]:
+                return price
+
     return None
 
 def parse_copper(html):
-    print(f"    解析铜价...")
-    
-    # 方法1：表格解析 - 查找"上海"和"今日铜价"
-    table_price = parse_table_price(html, ['上海', '今日铜价'], (100000, 105000))
+    print(f"    解析铜价... 页面长度: {len(html)}")
+
+    table_price = parse_table_price(html, ['上海', '今日铜价'], PRICE_RANGES.get('CU'))
     if table_price:
         print(f"    ✓ 表格解析: {table_price:,.0f}")
         return {
@@ -103,12 +134,22 @@ def parse_copper(html):
             'low': table_price,
             'high': table_price
         }
-    
-    # 方法2：查找所有5-6位数字，过滤合理的铜价范围
+
+    table_price = parse_table_price(html, ['上海'], PRICE_RANGES.get('CU'),
+                                    backup_pattern=r'(\d{5,6})\s*[-~]\s*(\d{5,6})')
+    if table_price:
+        print(f"    ✓ 备用解析: {table_price:,.0f}")
+        return {
+            'price': table_price,
+            'change': 0,
+            'low': table_price,
+            'high': table_price
+        }
+
     all_prices = re.findall(r'(\d{5,6})', html)
     copper_prices = [int(p) for p in all_prices if 100000 <= int(p) <= 105000]
     print(f"    方法2: 找到 {len(copper_prices)} 个铜价")
-    
+
     if len(copper_prices) >= 2:
         avg_price = sum(copper_prices) / len(copper_prices)
         print(f"    ✓ 方法2: {avg_price:,.0f}")
@@ -118,44 +159,41 @@ def parse_copper(html):
             'low': min(copper_prices),
             'high': max(copper_prices)
         }
-    
+
     print(f"    ✗ 铜价解析失败")
     return None
 
 def parse_aluminum(html):
-    print(f"    解析铝价...")
-    
-    # 方法1：表格解析 - 查找"ADC12"和"全国均价"
-    table_price = parse_table_price(html, ['ADC12', '全国均价'], (20000, 30000))
+    print(f"    解析铝价... 页面长度: {len(html)}")
+
+    table_price = parse_table_price(html, ['ADC12', '全国均价'], PRICE_RANGES.get('ADC12'))
     if table_price:
         print(f"    ✓ 表格解析: {table_price:,.0f}")
         return {'price': table_price, 'change': 0, 'low': table_price, 'high': table_price}
-    
-    # 方法2：正则匹配
+
     prices = re.findall(r'>(2[4-5]\d{3})<', html)
     if prices:
         print(f"    ✓ 方法2: {prices[0]}")
         price = float(prices[0])
         return {'price': price, 'change': 0, 'low': price, 'high': price}
-    
+
     print(f"    ✗ 铝价解析失败")
     return None
 
 def parse_aluminum_6063(html):
-    print(f"    解析6063铝价...")
-    
-    # 方法1：表格解析 - 查找"6063"
-    table_price = parse_table_price(html, ['6063'], (20000, 30000))
+    print(f"    解析6063铝价... 页面长度: {len(html)}")
+
+    table_price = parse_table_price(html, ['6063'], PRICE_RANGES.get('AL6063'))
     if table_price:
         print(f"    ✓ 表格解析: {table_price:,.0f}")
         return {'price': table_price, 'change': 0, 'low': table_price, 'high': table_price}
-    
+
     print(f"    ✗ 6063铝价解析失败")
     return None
 
 def parse_silicon_steel(html):
-    print(f"    解析硅钢...")
-    
+    print(f"    解析硅钢... 页面长度: {len(html)}")
+
     brands = {
         'B35A300': 'B35A300',
         'B50A310': 'B50A310',
@@ -163,21 +201,20 @@ def parse_silicon_steel(html):
         'B50A470': 'B50A470',
         'B50A600': 'B50A600',
     }
-    
+
     results = {}
-    
-    # 方法1：表格解析
+    price_range = PRICE_RANGES.get('B35A300')
+
     lines = html.split('\n')
     for brand, keyword in brands.items():
         for i, line in enumerate(lines):
             if keyword in line and '硅钢' in line:
                 table_lines = lines[i:i+15]
                 text = '\n'.join(table_lines)
-                
-                # 查找4位数价格（硅钢价格）
+
                 prices = re.findall(r'(\d{4})', text)
-                prices = [p for p in prices if 4000 <= int(p) <= 7000]
-                
+                prices = [p for p in prices if price_range and price_range[0] <= int(p) <= price_range[1]]
+
                 if prices:
                     price = float(prices[0])
                     results[brand] = {'price': price, 'change': 0, 'low': price, 'high': price}
@@ -185,8 +222,7 @@ def parse_silicon_steel(html):
                     break
         if brand in results:
             continue
-        
-        # 方法2：关键词搜索
+
         for i, line in enumerate(lines):
             if keyword in line:
                 segment = html[i:i+800]
@@ -196,22 +232,22 @@ def parse_silicon_steel(html):
                     results[brand] = {'price': price, 'change': 0, 'low': price, 'high': price}
                     print(f"      ✓ 方法2 {brand}: {price:,.0f}")
                     break
-                
+
                 prices = re.findall(r'>(\d{4,5})<', segment)
-                prices = [p for p in prices if 4000 <= int(p) <= 7000]
+                prices = [p for p in prices if price_range and price_range[0] <= int(p) <= price_range[1]]
                 if prices:
                     price = float(prices[0])
                     results[brand] = {'price': price, 'change': 0, 'low': price, 'high': price}
                     print(f"      ✓ 方法2 {brand}: {price:,.0f}")
                     break
-            if brand in results:
-                break
-    
+        if brand in results:
+            break
+
     if results:
         print(f"    ✓ 硅钢: {len(results)} 个品牌")
     else:
         print(f"    ✗ 硅钢解析失败")
-    
+
     return results if results else None
 
 def parse_rare_earth(html, price_range):
@@ -219,28 +255,23 @@ def parse_rare_earth(html, price_range):
     通用稀土价格解析函数
     price_range: (min_price, max_price) - 价格范围过滤
     """
-    # 方法1：表格解析 - 查找价格范围和均价
-    # 稀土价格通常是7位数（万元/吨）或3-6位数（元/千克）
     lines = html.split('\n')
-    
+
     for i, line in enumerate(lines):
         if '价格范围' in line and '均价' in line:
             table_lines = lines[i:i+20]
             text = '\n'.join(table_lines)
-            
-            # 查找价格范围（通常是 "xxxxx - xxxxx" 格式）
+
             range_match = re.search(r'(\d{4,7})\s*-\s*(\d{4,7})', text)
             if range_match:
                 low = float(range_match.group(1))
                 high = float(range_match.group(2))
-                
-                # 根据价格范围过滤
+
                 if price_range:
                     min_p, max_p = price_range
                     if not (min_p <= low <= max_p and min_p <= high <= max_p):
                         continue
-                
-                # 计算均价
+
                 avg_price = (low + high) / 2
                 return {
                     'price': avg_price,
@@ -248,40 +279,36 @@ def parse_rare_earth(html, price_range):
                     'low': low,
                     'high': high
                 }
-    
+
     return None
 
 def parse_reo(html):
-    print(f"    解析镨钕氧化物...")
-    
-    # 方法1：表格解析 - 镨钕氧化物价格范围约700000-800000元/吨
-    result = parse_rare_earth(html, (700000, 800000))
+    print(f"    解析镨钕氧化物... 页面长度: {len(html)}")
+
+    result = parse_rare_earth(html, PRICE_RANGES.get('REO'))
     if result:
         print(f"    ✓ 表格解析: {result['price']:,.0f}")
         return result
-    
+
     print(f"    ✗ 镨钕氧化物解析失败")
     return None
 
 def parse_ren(html):
-    print(f"    解析镨钕金属...")
-    
-    # 方法1：表格解析 - 镨钕金属价格范围约900000-1000000元/吨
-    result = parse_rare_earth(html, (900000, 1000000))
+    print(f"    解析镨钕金属... 页面长度: {len(html)}")
+
+    result = parse_rare_earth(html, PRICE_RANGES.get('REN'))
     if result:
         print(f"    ✓ 表格解析: {result['price']:,.0f}")
         return result
-    
+
     print(f"    ✗ 镨钕金属解析失败")
     return None
 
 def parse_tb(html):
-    print(f"    解析金属铽...")
-    
-    # 方法1：表格解析 - 金属铽价格约7000-8000元/千克（=7000000-8000000元/吨）
-    result = parse_rare_earth(html, (7000, 8000))
+    print(f"    解析金属铽... 页面长度: {len(html)}")
+
+    result = parse_rare_earth(html, PRICE_RANGES.get('TB'))
     if result:
-        # 将元/千克转换为元/吨
         price_per_ton = result['price'] * 1000
         print(f"    ✓ 表格解析: {result['price']:,.0f}元/千克 = {price_per_ton:,.0f}元/吨")
         return {
@@ -290,31 +317,29 @@ def parse_tb(html):
             'low': result['low'] * 1000,
             'high': result['high'] * 1000
         }
-    
+
     print(f"    ✗ 金属铽解析失败")
     return None
 
 def parse_ce(html):
-    print(f"    解析金属铈...")
-    
-    # 方法1：表格解析 - 金属铈价格约30000-40000元/吨
-    result = parse_rare_earth(html, (30000, 40000))
+    print(f"    解析金属铈... 页面长度: {len(html)}")
+
+    result = parse_rare_earth(html, PRICE_RANGES.get('CE'))
     if result:
         print(f"    ✓ 表格解析: {result['price']:,.0f}")
         return result
-    
+
     print(f"    ✗ 金属铈解析失败")
     return None
 
 def parse_dyfe(html):
-    print(f"    解析镝铁合金...")
-    
-    # 方法1：表格解析 - 镝铁合金价格范围约1300000-1400000元/吨
-    result = parse_rare_earth(html, (1300000, 1400000))
+    print(f"    解析镝铁合金... 页面长度: {len(html)}")
+
+    result = parse_rare_earth(html, PRICE_RANGES.get('DYFE'))
     if result:
         print(f"    ✓ 表格解析: {result['price']:,.0f}")
         return result
-    
+
     print(f"    ✗ 镝铁合金解析失败")
     return None
 
@@ -333,17 +358,6 @@ def load_data():
             except:
                 pass
     return {'update_time': '', 'today': [], 'history': {}}
-
-def get_last_price(code, data):
-    history = data.get('history', {}).get(code, [])
-    if history:
-        return {
-            'price': history[0]['price'],
-            'change': 0,
-            'low': history[0]['price'],
-            'high': history[0]['price']
-        }
-    return None
 
 def append_to_history(data, results, today_str):
     """
@@ -368,17 +382,21 @@ def append_to_history(data, results, today_str):
                 del history[code][idx]
         
         # 在开头插入新的当天记录
-        history[code].insert(0, {'date': today_str, 'price': price_data['price']})
+        history[code].insert(0, {'date': today_str, 'price': round(price_data['price'])})
     
     data['history'] = history
     return data
 
 def calc_change(code, price, data):
-    """根据历史记录计算今日相较于最近一条记录的涨跌"""
+    """计算与上一条【不同日期】记录的价格变化"""
     history = data.get('history', {}).get(code, [])
-    if history:
-        last_price = round(history[0]['price'])
-        return round(price) - last_price
+    today_str = datetime.now().strftime('%Y-%m-%d')
+
+    for entry in history:
+        if entry['date'] != today_str:
+            last_price = round(entry['price'])
+            return round(price) - last_price
+
     return 0
 
 def save_data(results, data):
@@ -398,7 +416,10 @@ def save_data(results, data):
     # 写入前统一取整
     for code in results:
         if results[code] is not None:
-            results[code]['price'] = round(results[code]['price'])
+            r = results[code]
+            r['price'] = round(r['price'])
+            if 'low' in r: r['low'] = round(r['low'])
+            if 'high' in r: r['high'] = round(r['high'])
     
     data = append_to_history(data, results, today)
     
