@@ -94,10 +94,10 @@ function renderCards() {
         const bgClass = m.change > 0 ? 'border-l-red-400' : m.change < 0 ? 'border-l-green-400' : 'border-l-gray-300';
         const arrow = m.change > 0 ? '↑' : m.change < 0 ? '↓' : '—';
         const isActive = m.code === currentMaterial ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md';
-        const priceStr = isRare ? formatRarePrice(m.price) : m.price.toLocaleString();
+        const priceStr = isRare ? (m.price / 10000).toFixed(2) : m.price.toLocaleString();
         const unit = isRare ? '万元/吨' : '元/吨';
         const changeDisplay = isRare
-            ? (m.change !== 0 ? Math.round(m.change / 10000).toLocaleString() : '0')
+            ? (m.change !== 0 ? (m.change / 10000).toFixed(2) : '0.00')
             : Math.abs(m.change).toLocaleString();
         
         return `
@@ -196,14 +196,7 @@ function renderChart() {
                 x: { grid: { display: false } },
                 y: {
                     beginAtZero: false,
-                    ticks: {
-                        callback: function(value) {
-                            if (currentMaterial && rareEarthCodes.has(currentMaterial)) {
-                                return Math.round(value / 10000).toLocaleString();
-                            }
-                            return value.toLocaleString();
-                        }
-                    }
+                    ticks: { callback: function(value) { return value.toLocaleString(); } }
                 }
             }
         }
@@ -303,7 +296,7 @@ function renderHistoryTable(page = 0) {
         const sign = change > 0 ? '+' : '';
         const priceStr = isRare ? formatRarePrice(h.price) : h.price.toLocaleString();
         const changeStr = isRare
-            ? (change !== 0 ? Math.round(change / 10000).toLocaleString() : '0')
+            ? (change !== 0 ? (change / 10000).toFixed(2) : '0.00')
             : change.toLocaleString();
 
         return `
@@ -336,7 +329,10 @@ function loadMoreHistory() {
 }
 
 function formatRarePrice(price) {
-    return Math.round(price / 10000).toLocaleString();
+    const wan = price / 10000;
+    if (wan >= 100) return wan.toFixed(0);
+    if (wan >= 10) return wan.toFixed(1);
+    return wan.toFixed(2);
 }
 
 // 导出CSV
@@ -381,9 +377,9 @@ function exportCSV() {
 // 格式化价格（用于图表tooltip等通用场景）
 function formatPrice(price, code) {
     if (code && rareEarthCodes.has(code)) {
-        return Math.round(price / 10000).toLocaleString() + ' 万元/吨';
+        return (price / 10000).toFixed(2) + ' 万元/吨';
     }
-    return Math.round(price).toLocaleString() + ' 元/吨';
+    return price.toLocaleString() + ' 元/吨';
 }
 
 // 更新时间戳
