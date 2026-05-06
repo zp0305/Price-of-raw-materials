@@ -85,8 +85,9 @@ function initDateInputs() {
 // 渲染价格卡片
 function renderCards() {
     const container = document.getElementById('price-cards');
-    
-    const cards = priceData.today.map(m => {
+
+    const sorted = [...priceData.today].sort((a, b) => b.price - a.price);
+    const cards = sorted.map(m => {
         const category = materialCategories[m.code] || 'all';
         const isRare = rareEarthCodes.has(m.code);
         const changeClass = m.change > 0 ? 'text-red-500' : m.change < 0 ? 'text-green-500' : 'text-gray-400';
@@ -147,7 +148,7 @@ function highlightCard(code) {
 // 筛选材料
 function filterMaterials(category) {
     currentFilter = category;
-    
+
     document.querySelectorAll('.filter-btn').forEach(btn => {
         if (btn.dataset.filter === category) {
             btn.classList.add('bg-blue-500', 'text-white');
@@ -157,10 +158,17 @@ function filterMaterials(category) {
             btn.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-100');
         }
     });
-    
+
+    const visibleCards = [];
     document.querySelectorAll('.price-card').forEach(card => {
-        card.style.display = (category === 'all' || card.dataset.category === category) ? 'block' : 'none';
+        const match = (category === 'all' || card.dataset.category === category);
+        card.style.display = match ? 'block' : 'none';
+        if (match) visibleCards.push(card);
     });
+
+    if (visibleCards.length > 0) {
+        selectMaterial(visibleCards[0].dataset.code);
+    }
 }
 
 // 渲染图表
@@ -207,17 +215,15 @@ function updateChart() {
 function getChartData() {
     const history = priceData.history[currentMaterial] || [];
     let filtered = currentRange > 0 ? history.slice(0, currentRange) : history;
-    
-    // 数据点过多时采样
+
     if (filtered.length > 60) {
-        const step = Math.ceil(filtered.length / 60);
-        filtered = filtered.filter((_, i) => i % step === 0);
+        filtered = sampleData(filtered, 60);
     }
-    
+
     const sorted = [...filtered].reverse();
     const material = priceData.today.find(m => m.code === currentMaterial);
     const labels = sorted.map(h => currentRange >= 365 ? h.date.slice(0, 7) : h.date.slice(5));
-    
+
     return {
         labels: labels,
         datasets: [{
@@ -232,6 +238,20 @@ function getChartData() {
             pointHoverRadius: 5
         }]
     };
+}
+
+function sampleData(data, maxPoints) {
+    if (data.length <= maxPoints) return data;
+    const step = Math.ceil(data.length / maxPoints);
+    const result = [];
+    for (let i = 0; i < data.length; i += step) {
+        const chunk = data.slice(i, Math.min(i + step, data.length));
+        result.push({
+            date: chunk[0].date,
+            price: chunk[Math.floor(chunk.length / 2)].price,
+        });
+    }
+    return result;
 }
 
 // 设置图表时间范围
@@ -252,34 +272,67 @@ function setChartRange(days) {
 }
 
 // 渲染历史数据表
-function renderHistoryTable() {
+const pageSize = 50;
+let currentPage = 0;
+
+function renderHistoryTable(page = 0) {
+    currentPage = page;
     const tbody = document.getElementById('history-table');
     const history = priceData.history[currentMaterial] || [];
-    
-    const rows = history.slice(0, 50).map((h, index) => {
-        const prev = history[index + 1];
+    const isRare = rareEarthCodes.has(currentMaterial);
+
+    document.getElementById('price-header').textContent =
+        isRare ? '价格 (万元/吨)' : '价格 (元/吨)';
+
+    const start = page * pageSize;
+    const end = start + pageSize;
+    const pageData = history.slice(start, end);
+
+    const rows = pageData.map((h, index) => {
+        const prev = history[index + 1 + start];
         const change = prev ? h.price - prev.price : 0;
         const changePercent = prev ? ((change / prev.price) * 100).toFixed(2) : '0.00';
         const changeClass = change > 0 ? 'text-red-500' : change < 0 ? 'text-green-500' : 'text-gray-400';
         const sign = change > 0 ? '+' : '';
-        const isRare = rareEarthCodes.has(currentMaterial);
-        const priceStr = isRare ? (h.price / 10000).toFixed(2) : h.price.toLocaleString();
+        const priceStr = isRare ? formatRarePrice(h.price) : h.price.toLocaleString();
         const changeStr = isRare
             ? (change !== 0 ? (change / 10000).toFixed(2) : '0.00')
             : change.toLocaleString();
-        const unit = isRare ? '万元/吨' : '元/吨';
-        
+
         return `
             <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-3 text-gray-700">${h.date}</td>
-                <td class="px-4 py-3 text-right font-mono font-semibold">${priceStr} <span class="text-xs text-gray-400">${unit}</span></td>
+                <td class="px-4 py-3 text-right font-mono font-semibold">${priceStr}</td>
                 <td class="px-4 py-3 text-right ${changeClass}">${sign}${changeStr}</td>
                 <td class="px-4 py-3 text-right ${changeClass}">${sign}${changePercent}%</td>
             </tr>
         `;
     }).join('');
-    
-    tbody.innerHTML = rows || '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">暂无历史数据</td></tr>';
+
+    if (history.length > end) {
+        tbody.innerHTML = rows + `
+            <tr id="load-more-row">
+                <td colspan="4" class="px-4 py-4 text-center">
+                    <button onclick="loadMoreHistory()" class="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">
+                        加载更多 (${history.length - end} 条)
+                    </button>
+                </td>
+            </tr>
+        `;
+    } else {
+        tbody.innerHTML = rows || '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">暂无历史数据</td></tr>';
+    }
+}
+
+function loadMoreHistory() {
+    renderHistoryTable(currentPage + 1);
+}
+
+function formatRarePrice(price) {
+    const wan = price / 10000;
+    if (wan >= 100) return wan.toFixed(0);
+    if (wan >= 10) return wan.toFixed(1);
+    return wan.toFixed(2);
 }
 
 // 导出CSV
