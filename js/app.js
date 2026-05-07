@@ -73,6 +73,17 @@ function getFreshness(dateStr) {
     return { badge: dateStr.slice(5), cls: 'bg-gray-400 text-white' };
 }
 
+// 判断历史数据是否断档（最近一条不为今天的记录超过3天前）
+function isHistoryStale(code) {
+    const history = priceData.history[code] || [];
+    if (history.length < 2) return true;
+    // history[0] 是今天刚插入的数据，history[1] 才是前一条
+    const latest = history[1].date;
+    const todayStr = new Date().toISOString().split('T')[0];
+    const diff = (new Date(todayStr) - new Date(latest)) / (1000 * 60 * 60 * 24);
+    return diff > 3;
+}
+
 // 填充下拉选择器
 function populateSelectors() {
     const materialSelect = document.getElementById('material-select');
@@ -120,13 +131,14 @@ function renderCards() {
     const sorted = [...priceData.today].sort((a, b) => b.price - a.price);
     const cards = sorted.map(m => {
         const category = materialCategories[m.code] || 'all';
-        const changeClass = m.change > 0 ? 'text-red-500' : m.change < 0 ? 'text-green-500' : 'text-gray-400';
-        const bgClass = m.change > 0 ? 'border-l-red-400' : m.change < 0 ? 'border-l-green-400' : 'border-l-gray-300';
-        const arrow = m.change > 0 ? '↑' : m.change < 0 ? '↓' : '—';
+        const stale = isHistoryStale(m.code);
+        const changeClass = !stale ? (m.change > 0 ? 'text-red-500' : m.change < 0 ? 'text-green-500' : 'text-gray-400') : 'text-gray-400';
+        const bgClass = !stale ? (m.change > 0 ? 'border-l-red-400' : m.change < 0 ? 'border-l-green-400' : 'border-l-gray-300') : 'border-l-gray-300';
+        const arrow = stale ? '—' : (m.change > 0 ? '↑' : m.change < 0 ? '↓' : '—');
         const isActive = m.code === currentMaterial ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md';
         const priceStr = m.price.toLocaleString();
         const unit = '元/吨';
-        const changeDisplay = Math.abs(m.change).toLocaleString();
+        const changeDisplay = stale ? '数据断档' : Math.abs(m.change).toLocaleString();
         const freshness = getFreshness(m.date);
         
         return `
