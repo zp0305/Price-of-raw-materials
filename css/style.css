@@ -154,7 +154,7 @@ table tbody tr:hover {
     scrollbar-width: none;
 }
 
-/* 图表容器：桌面320px，横屏自适应 */
+/* 图表容器：自适应 */
 .chart-container {
     height: 320px;
 }
@@ -163,10 +163,12 @@ table tbody tr:hover {
         height: 240px;
     }
 }
-@media (orientation: landscape) and (max-height: 500px) {
+
+/* 手机横屏：图表最大化 */
+@media (orientation: landscape) and (max-height: 600px) {
     .chart-container {
-        height: 55vh !important;
-        max-height: 320px;
+        height: 60vh !important;
+        max-height: 350px;
     }
     header .container {
         padding-top: 0.5rem;
