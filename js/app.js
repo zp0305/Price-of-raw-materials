@@ -105,7 +105,7 @@ function renderCards() {
                     <span class="text-sm font-medium text-gray-600">${m.name}</span>
                     <span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">${m.code}</span>
                 </div>
-                <div class="text-2xl font-bold text-gray-900 mb-1">
+                <div class="text-2xl font-bold text-gray-900 mb-1 price-number">
                     ${priceStr}
                 </div>
                 <div class="flex items-center justify-between">

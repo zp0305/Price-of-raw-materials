@@ -137,3 +137,19 @@ table tbody tr:hover {
         font-size: 1.25rem;
     }
 }
+
+/* 手机端长数字自动缩小 */
+.price-card .price-number {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 隐藏滚动条（Webkit 浏览器） */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

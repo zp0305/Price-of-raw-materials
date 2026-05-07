@@ -22,14 +22,14 @@
                         <p class="text-xs text-gray-400">星辰科技 · 供应链管理中心</p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <div class="flex items-center space-x-3 mb-1">
-                        <button onclick="refreshData()" class="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 flex items-center space-x-2 shadow">
+                <div class="text-right flex-shrink-0">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <button onclick="refreshData()" class="px-3 py-2 bg-green-500 text-white rounded-lg text-xs sm:text-sm hover:bg-green-600 flex items-center space-x-1 shadow">
                             <span>🔄</span>
-                            <span>刷新数据</span>
+                            <span class="hidden sm:inline">刷新数据</span>
                         </button>
-                        <button onclick="showConfig()" class="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm hover:bg-gray-700 shadow">
-                            ⚙️ 配置
+                        <button onclick="showConfig()" class="px-3 py-2 bg-gray-600 text-white rounded-lg text-xs sm:text-sm hover:bg-gray-700 shadow">
+                            ⚙️
                         </button>
                     </div>
                     <div class="flex items-center justify-end space-x-2 text-sm">
@@ -41,19 +41,19 @@
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-6 space-y-6">
+    <main class="container mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         <!-- 今日价格卡片 -->
         <section>
-            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-bold text-gray-800 flex items-center">
                     <span class="w-1 h-5 bg-blue-500 rounded mr-2"></span>
                     今日价格概览
                 </h2>
-                <div class="flex space-x-2">
-                    <button onclick="filterMaterials('all')" class="filter-btn active px-4 py-1.5 text-sm rounded-full bg-blue-500 text-white transition-all" data-filter="all">全部</button>
-                    <button onclick="filterMaterials('cu')" class="filter-btn px-4 py-1.5 text-sm rounded-full bg-white text-gray-600 hover:bg-gray-100 transition-all shadow-sm" data-filter="cu">铜铝</button>
-                    <button onclick="filterMaterials('sife')" class="filter-btn px-4 py-1.5 text-sm rounded-full bg-white text-gray-600 hover:bg-gray-100 transition-all shadow-sm" data-filter="sife">硅钢</button>
-                    <button onclick="filterMaterials('rare')" class="filter-btn px-4 py-1.5 text-sm rounded-full bg-white text-gray-600 hover:bg-gray-100 transition-all shadow-sm" data-filter="rare">稀土</button>
+                <div class="flex space-x-2 overflow-x-auto -mx-2 px-2 scrollbar-hide whitespace-nowrap">
+                    <button onclick="filterMaterials('all')" class="filter-btn active px-3 py-1.5 text-sm rounded-full bg-blue-500 text-white transition-all flex-shrink-0" data-filter="all">全部</button>
+                    <button onclick="filterMaterials('cu')" class="filter-btn px-3 py-1.5 text-sm rounded-full bg-white text-gray-600 hover:bg-gray-100 transition-all shadow-sm flex-shrink-0" data-filter="cu">铜铝</button>
+                    <button onclick="filterMaterials('sife')" class="filter-btn px-3 py-1.5 text-sm rounded-full bg-white text-gray-600 hover:bg-gray-100 transition-all shadow-sm flex-shrink-0" data-filter="sife">硅钢</button>
+                    <button onclick="filterMaterials('rare')" class="filter-btn px-3 py-1.5 text-sm rounded-full bg-white text-gray-600 hover:bg-gray-100 transition-all shadow-sm flex-shrink-0" data-filter="rare">稀土</button>
                 </div>
             </div>
             <div id="price-cards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
@@ -72,17 +72,17 @@
                     <select id="material-select" class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50">
                         <!-- 选项由JS生成 -->
                     </select>
-                    <div class="flex space-x-1 bg-gray-100 rounded-lg p-1">
-                        <button onclick="setChartRange(7)" class="range-btn px-3 py-1.5 text-sm rounded-md bg-blue-500 text-white" data-range="7">7天</button>
-                        <button onclick="setChartRange(30)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white" data-range="30">30天</button>
-                        <button onclick="setChartRange(90)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white" data-range="90">90天</button>
-                        <button onclick="setChartRange(180)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white" data-range="180">半年</button>
-                        <button onclick="setChartRange(365)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white" data-range="365">一年</button>
-                        <button onclick="setChartRange(0)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white" data-range="0">全部</button>
+                    <div class="flex space-x-1 bg-gray-100 rounded-lg p-1 overflow-x-auto scrollbar-hide">
+                        <button onclick="setChartRange(7)" class="range-btn px-3 py-1.5 text-sm rounded-md bg-blue-500 text-white flex-shrink-0" data-range="7">7天</button>
+                        <button onclick="setChartRange(30)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white flex-shrink-0" data-range="30">30天</button>
+                        <button onclick="setChartRange(90)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white flex-shrink-0" data-range="90">90天</button>
+                        <button onclick="setChartRange(180)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white flex-shrink-0" data-range="180">半年</button>
+                        <button onclick="setChartRange(365)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white flex-shrink-0" data-range="365">一年</button>
+                        <button onclick="setChartRange(0)" class="range-btn px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-white flex-shrink-0" data-range="0">全部</button>
                     </div>
                 </div>
             </div>
-            <div class="relative h-80">
+            <div class="relative h-60 md:h-80">
                 <canvas id="price-chart"></canvas>
             </div>
         </section>
