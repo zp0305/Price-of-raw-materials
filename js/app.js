@@ -26,10 +26,10 @@ async function init() {
     initOrientationDetection();
 }
 
-// 横屏检测（解决夸克等浏览器CSS media query不生效问题）
+// 横屏检测（仅手机端生效，不影响桌面显示器）
 function initOrientationDetection() {
     function checkOrientation() {
-        if (window.innerHeight < window.innerWidth) {
+        if (window.innerWidth <= 768 && window.innerHeight < window.innerWidth) {
             document.body.classList.add('landscape');
         } else {
             document.body.classList.remove('landscape');
@@ -57,15 +57,20 @@ async function loadData() {
 }
 
 // 判断数据新鲜度：返回 { badge, colorClass }
+// 使用字符串比较避免时区问题
 function getFreshness(dateStr) {
-    const today = new Date();
-    const dataDate = new Date(dateStr);
-    const diffDays = Math.floor((today - dataDate) / (1000 * 60 * 60 * 24));
+    const todayStr = new Date().toISOString().split('T')[0];  // "2026-05-07"
     
-    if (diffDays === 0) return { badge: '今日', cls: 'bg-green-500 text-white', label: '今日数据' };
-    if (diffDays === 1) return { badge: '昨日', cls: 'bg-yellow-500 text-white', label: '昨日数据' };
-    if (diffDays <= 3) return { badge: `${diffDays}天前`, cls: 'bg-orange-400 text-white', label: `${diffDays}天前数据` };
-    return { badge: dateStr.slice(5), cls: 'bg-gray-400 text-white', label: dateStr };
+    if (dateStr === todayStr) return { badge: '今日', cls: 'bg-green-500 text-white' };
+    
+    // 算天数差
+    const d1 = new Date(dateStr);
+    const d2 = new Date(todayStr);
+    const diffDays = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return { badge: '昨日', cls: 'bg-yellow-500 text-white' };
+    if (diffDays <= 3) return { badge: `${diffDays}天前`, cls: 'bg-orange-400 text-white' };
+    return { badge: dateStr.slice(5), cls: 'bg-gray-400 text-white' };
 }
 
 // 填充下拉选择器

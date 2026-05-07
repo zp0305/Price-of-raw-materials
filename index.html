@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>原材料价格监控 | 星辰科技</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            safelist: [
+                'bg-green-500', 'bg-yellow-500', 'bg-orange-400', 'bg-gray-400',
+                'text-white',
+            ]
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -24,11 +32,11 @@
                 </div>
                 <div class="text-right flex-shrink-0">
                     <div class="flex items-center space-x-2 mb-1">
-                        <button onclick="refreshData()" class="px-3 py-2 bg-green-500 text-white rounded-lg text-xs sm:text-sm hover:bg-green-600 flex items-center space-x-1 shadow">
+                        <button onclick="refreshData()" class="px-3 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 flex items-center space-x-1 shadow">
                             <span>🔄</span>
-                            <span class="hidden sm:inline">刷新数据</span>
+                            <span>刷新数据</span>
                         </button>
-                        <button onclick="showConfig()" class="px-3 py-2 bg-gray-600 text-white rounded-lg text-xs sm:text-sm hover:bg-gray-700 shadow">
+                        <button onclick="showConfig()" class="px-3 py-2 bg-gray-600 text-white rounded-lg text-sm hover:bg-gray-700 shadow">
                             ⚙️
                         </button>
                     </div>
