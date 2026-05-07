@@ -25,7 +25,7 @@ session = requests.Session()
 
 PRICE_RANGES = {
     'CU': (95000, 110000),
-    'ADC12': (18000, 35000),
+    'ADC12': (22000, 25000),
     'AL6063': (20000, 30000),
     'B35A300': (3500, 8000),
     'B50A310': (3500, 8000),
@@ -53,7 +53,7 @@ def get_headers():
 
 SOURCES = {
     'CU': 'https://hq.smm.cn/h5/cu-price',
-    'ADC12': 'https://hq.smm.cn/h5/aluminum-alloy-price',
+    'ADC12': 'https://hq.smm.cn/h5/ADC12-aluminum-alloy-price',
     'AL6063': 'https://hq.smm.cn/h5/aluminum-alloy-price',
     'SI_SH': 'https://hq.smm.cn/h5/SiFe-shanghai-price',
     'REO': 'https://hq.smm.cn/h5/praseodymium-neodymium-oxide-price',
@@ -166,15 +166,29 @@ def parse_copper(html):
 def parse_aluminum(html):
     print(f"    解析铝价... 页面长度: {len(html)}")
 
+    # 方法1：精确定位ADC12全国均价行
+    lines = html.split('\n')
+    for i, line in enumerate(lines):
+        if 'ADC12' in line and ('全国均价' in line or '平均价' in line):
+            ctx = '\n'.join(lines[i:i+10])
+            nums = re.findall(r'>(\d{4,5})<', ctx)
+            nums = [int(p) for p in nums if PRICE_RANGES['ADC12'][0] <= int(p) <= PRICE_RANGES['ADC12'][1]]
+            if nums:
+                avg = float(nums[len(nums)//2])
+                print(f"    ✓ ADC12均价: {avg:,.0f}")
+                return {'price': avg, 'change': 0, 'low': avg, 'high': avg}
+
+    # 方法2：原parse_table_price备选
     table_price = parse_table_price(html, ['ADC12', '全国均价'], PRICE_RANGES.get('ADC12'))
     if table_price:
         print(f"    ✓ 表格解析: {table_price:,.0f}")
         return {'price': table_price, 'change': 0, 'low': table_price, 'high': table_price}
 
-    prices = re.findall(r'>(2[4-5]\d{3})<', html)
+    # 方法3：正则备选（收窄范围到23xxx-24xxx，排除A380）
+    prices = re.findall(r'>(2[3-4]\d{3})<', html)
     if prices:
-        print(f"    ✓ 方法2: {prices[0]}")
         price = float(prices[0])
+        print(f"    ✓ 方法3: {price:,.0f}")
         return {'price': price, 'change': 0, 'low': price, 'high': price}
 
     print(f"    ✗ 铝价解析失败")
