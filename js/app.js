@@ -12,7 +12,7 @@ const materialCategories = {
     'REO': 'rare', 'REN': 'rare', 'TB': 'rare', 'CE': 'rare', 'DYFE': 'rare'
 };
 
-// 稀土材料编码集合（用于判断显示单位）
+// 稀土材料编码集合
 const rareEarthCodes = new Set(['REO', 'REN', 'TB', 'CE', 'DYFE']);
 
 // 初始化
@@ -89,16 +89,13 @@ function renderCards() {
     const sorted = [...priceData.today].sort((a, b) => b.price - a.price);
     const cards = sorted.map(m => {
         const category = materialCategories[m.code] || 'all';
-        const isRare = rareEarthCodes.has(m.code);
         const changeClass = m.change > 0 ? 'text-red-500' : m.change < 0 ? 'text-green-500' : 'text-gray-400';
         const bgClass = m.change > 0 ? 'border-l-red-400' : m.change < 0 ? 'border-l-green-400' : 'border-l-gray-300';
         const arrow = m.change > 0 ? '↑' : m.change < 0 ? '↓' : '—';
         const isActive = m.code === currentMaterial ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md';
-        const priceStr = isRare ? formatRarePrice(m.price) : m.price.toLocaleString();
-        const unit = isRare ? '万元/吨' : '元/吨';
-        const changeDisplay = isRare
-            ? (m.change !== 0 ? Math.round(m.change / 10000).toLocaleString() : '0')
-            : Math.abs(m.change).toLocaleString();
+        const priceStr = m.price.toLocaleString();
+        const unit = '元/吨';
+        const changeDisplay = Math.abs(m.change).toLocaleString();
         
         return `
             <div class="price-card bg-white rounded-xl p-4 border-l-4 ${bgClass} shadow-sm cursor-pointer transition-all ${isActive}" 
@@ -196,14 +193,7 @@ function renderChart() {
                 x: { grid: { display: false } },
                 y: {
                     beginAtZero: false,
-                    ticks: {
-                        callback: function(value) {
-                            if (currentMaterial && rareEarthCodes.has(currentMaterial)) {
-                                return Math.round(value / 10000).toLocaleString();
-                            }
-                            return value.toLocaleString();
-                        }
-                    }
+                    ticks: { callback: function(value) { return value.toLocaleString(); } }
                 }
             }
         }
@@ -286,10 +276,8 @@ function renderHistoryTable(page = 0) {
     currentPage = page;
     const tbody = document.getElementById('history-table');
     const history = priceData.history[currentMaterial] || [];
-    const isRare = rareEarthCodes.has(currentMaterial);
 
-    document.getElementById('price-header').textContent =
-        isRare ? '价格 (万元/吨)' : '价格 (元/吨)';
+    document.getElementById('price-header').textContent = '价格 (元/吨)';
 
     const start = page * pageSize;
     const end = start + pageSize;
@@ -301,10 +289,8 @@ function renderHistoryTable(page = 0) {
         const changePercent = prev ? ((change / prev.price) * 100).toFixed(2) : '0.00';
         const changeClass = change > 0 ? 'text-red-500' : change < 0 ? 'text-green-500' : 'text-gray-400';
         const sign = change > 0 ? '+' : '';
-        const priceStr = isRare ? formatRarePrice(h.price) : h.price.toLocaleString();
-        const changeStr = isRare
-            ? (change !== 0 ? Math.round(change / 10000).toLocaleString() : '0')
-            : change.toLocaleString();
+        const priceStr = h.price.toLocaleString();
+        const changeStr = change.toLocaleString();
 
         return `
             <tr class="hover:bg-gray-50 transition-colors">
@@ -380,9 +366,6 @@ function exportCSV() {
 
 // 格式化价格（用于图表tooltip等通用场景）
 function formatPrice(price, code) {
-    if (code && rareEarthCodes.has(code)) {
-        return Math.round(price / 10000).toLocaleString() + ' 万元/吨';
-    }
     return Math.round(price).toLocaleString() + ' 元/吨';
 }
 
