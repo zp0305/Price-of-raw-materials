@@ -153,3 +153,62 @@ table tbody tr:hover {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* 图表容器：桌面320px，横屏自适应 */
+.chart-container {
+    height: 320px;
+}
+@media (max-width: 640px) {
+    .chart-container {
+        height: 240px;
+    }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+    .chart-container {
+        height: 55vh !important;
+        max-height: 320px;
+    }
+    header .container {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    header h1 {
+        font-size: 1rem;
+    }
+    header .text-xs {
+        display: none;
+    }
+    header .mb-1 {
+        margin-bottom: 0;
+    }
+    header button {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    main {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0 !important;
+    }
+    main > section {
+        margin-bottom: 0.5rem;
+    }
+    main > section .p-6 {
+        padding: 0.75rem;
+    }
+    .price-card {
+        padding: 0.5rem !important;
+    }
+    .price-card .text-2xl {
+        font-size: 1.1rem;
+    }
+    .price-card .text-sm {
+        font-size: 0.7rem;
+    }
+    #price-cards {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+    footer {
+        display: none;
+    }
+}
