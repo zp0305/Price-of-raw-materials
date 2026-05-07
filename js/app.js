@@ -23,6 +23,20 @@ async function init() {
     renderHistoryTable();
     initDateInputs();
     updateTimestamp();
+    initOrientationDetection();
+}
+
+// 横屏检测（解决夸克等浏览器CSS media query不生效问题）
+function initOrientationDetection() {
+    function checkOrientation() {
+        if (window.innerHeight < window.innerWidth) {
+            document.body.classList.add('landscape');
+        } else {
+            document.body.classList.remove('landscape');
+        }
+    }
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
 }
 
 // 加载价格数据
@@ -40,6 +54,18 @@ async function loadData() {
         console.error('加载数据失败:', error);
         showError('数据加载失败，请刷新页面重试');
     }
+}
+
+// 判断数据新鲜度：返回 { badge, colorClass }
+function getFreshness(dateStr) {
+    const today = new Date();
+    const dataDate = new Date(dateStr);
+    const diffDays = Math.floor((today - dataDate) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return { badge: '今日', cls: 'bg-green-500 text-white', label: '今日数据' };
+    if (diffDays === 1) return { badge: '昨日', cls: 'bg-yellow-500 text-white', label: '昨日数据' };
+    if (diffDays <= 3) return { badge: `${diffDays}天前`, cls: 'bg-orange-400 text-white', label: `${diffDays}天前数据` };
+    return { badge: dateStr.slice(5), cls: 'bg-gray-400 text-white', label: dateStr };
 }
 
 // 填充下拉选择器
@@ -96,6 +122,7 @@ function renderCards() {
         const priceStr = m.price.toLocaleString();
         const unit = '元/吨';
         const changeDisplay = Math.abs(m.change).toLocaleString();
+        const freshness = getFreshness(m.date);
         
         return `
             <div class="price-card bg-white rounded-xl p-4 border-l-4 ${bgClass} shadow-sm cursor-pointer transition-all ${isActive}" 
@@ -103,7 +130,10 @@ function renderCards() {
                  onclick="selectMaterial('${m.code}')">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-medium text-gray-600">${m.name}</span>
-                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">${m.code}</span>
+                    <span class="flex items-center space-x-1">
+                        <span class="text-xs px-1.5 py-0.5 rounded ${freshness.cls}">${freshness.badge}</span>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">${m.code}</span>
+                    </span>
                 </div>
                 <div class="text-2xl font-bold text-gray-900 mb-1 price-number">
                     ${priceStr}
@@ -369,11 +399,22 @@ function formatPrice(price, code) {
     return Math.round(price).toLocaleString() + ' 元/吨';
 }
 
-// 更新时间戳
+// 更新时间戳（带新鲜度颜色）
 function updateTimestamp() {
     const el = document.getElementById('update-time');
+    const statusDot = document.getElementById('update-status');
     if (priceData && priceData.update_time) {
         el.textContent = priceData.update_time;
+        // 判断数据新鲜度
+        const today = new Date().toISOString().split('T')[0];
+        const dataDate = priceData.today.length > 0 ? priceData.today[0].date : '';
+        if (dataDate === today) {
+            statusDot.className = 'inline-block w-2 h-2 rounded-full bg-green-400 mr-1';
+            el.className = 'font-mono font-semibold text-green-400';
+        } else if (dataDate) {
+            statusDot.className = 'inline-block w-2 h-2 rounded-full bg-yellow-400 mr-1';
+            el.className = 'font-mono font-semibold text-yellow-400';
+        }
     }
 }
 
