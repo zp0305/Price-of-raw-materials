@@ -284,21 +284,21 @@ def parse_silicon_steel_mysteel(html):
             results['B50A600'] = {'price': price, 'change': 0, 'low': price, 'high': price}
             print(f"      ✓ 我的钢铁网 50WW600→B50A600: {price:,.0f}")
     
-    # 对于B35A300、B50A350、B50A470：基于B50A600估算（参考历史价差）
+    # 根据牌号品质估算（铁损越低越贵）：B35A300 > B50A350 > B50A470 > B50A600
     if 'B50A600' in results:
         base = results['B50A600']['price']
-        # B35A300（低铁损）通常比B50A600贵 300-500
-        b35 = base + 400
-        results['B35A300'] = {'price': b35, 'change': 0, 'low': b35, 'high': b35}
-        print(f"      ✓ 估算 B35A300: {b35:,.0f} (基于B50A600+400)")
-        # B50A470 与 B50A600 价差通常 -200~0
-        b470 = base - 100
+        # B50A470 铁损4.70，比B50A600(6.00)质量更好
+        b470 = base + 200
         results['B50A470'] = {'price': b470, 'change': 0, 'low': b470, 'high': b470}
-        print(f"      ✓ 估算 B50A470: {b470:,.0f} (基于B50A600-100)")
-        # B50A350 与 B50A600 价差约 0~200
-        b350 = base + 100
+        print(f"      ✓ 估算 B50A470: {b470:,.0f} (基于B50A600+200)")
+        # B50A350 铁损3.50，品质更高
+        b350 = base + 400
         results['B50A350'] = {'price': b350, 'change': 0, 'low': b350, 'high': b350}
-        print(f"      ✓ 估算 B50A350: {b350:,.0f} (基于B50A600+100)")
+        print(f"      ✓ 估算 B50A350: {b350:,.0f} (基于B50A600+400)")
+        # B35A300 厚度0.35mm+低铁损，最贵
+        b35 = base + 600
+        results['B35A300'] = {'price': b35, 'change': 0, 'low': b35, 'high': b35}
+        print(f"      ✓ 估算 B35A300: {b35:,.0f} (基于B50A600+600)")
     
     if results:
         print(f"    ✓ 我的钢铁网硅钢: {len(results)} 个品牌")
