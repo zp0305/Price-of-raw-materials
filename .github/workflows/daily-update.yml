@@ -2,8 +2,10 @@ name: Daily Price Update
 
 on:
   schedule:
-    # 每天11:30 UTC+8 即 03:30 UTC
+    # 每天11:30 UTC+8 即 03:30 UTC（主任务）
     - cron: '30 3 * * *'
+    # 11:55 补跑一次，防止GitHub cron跳票
+    - cron: '55 3 * * *'
   workflow_dispatch:
     inputs:
       force_update:
