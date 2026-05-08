@@ -2,10 +2,16 @@ name: Daily Price Update
 
 on:
   schedule:
-    # 每天11:30 UTC+8 即 03:30 UTC（主任务）
+    # 11:30 UTC+8 / 03:30 UTC — SMM首次更新后抓取
     - cron: '30 3 * * *'
-    # 11:55 补跑一次，防止GitHub cron跳票
+    # 11:55 UTC+8 / 03:55 UTC — 补跑
     - cron: '55 3 * * *'
+    # 15:00 UTC+8 / 07:00 UTC — 下午抓取，覆盖SMM下午更新
+    - cron: '0 7 * * *'
+    # 20:00 UTC+8 / 12:00 UTC — 晚间抓取，确保当天数据完整
+    - cron: '0 12 * * *'
+    # 04:00 UTC+8 / 20:00 UTC — 凌晨抓取前一天的最终数据
+    - cron: '0 20 * * *'
   workflow_dispatch:
     inputs:
       force_update:
