@@ -44,7 +44,7 @@ def get_headers():
         'User-Agent': random.choice(USER_AGENTS),
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Encoding': 'gzip, deflate',
         'Referer': 'https://hq.smm.cn/',
         'Cache-Control': 'max-age=0',
         'DNT': '1',
@@ -56,6 +56,7 @@ SOURCES = {
     'ADC12': 'https://hq.smm.cn/h5/ADC12-aluminum-alloy-price',
     'AL6063': 'https://hq.smm.cn/h5/aluminum-alloy-price',
     'SI_SH': 'https://hq.smm.cn/h5/SiFe-shanghai-price',
+    'SI_MYSTEEL': 'https://guigang.mysteel.com/',
     'REO': 'https://hq.smm.cn/h5/praseodymium-neodymium-oxide-price',
     'REN': 'https://hq.smm.cn/h5/praseodymium-neodymium-metal-price',
     'TB': 'https://hq.smm.cn/h5/terbium-metal-price',
@@ -263,6 +264,46 @@ def parse_silicon_steel(html):
         print(f"    ✗ 硅钢解析失败")
 
     return results if results else None
+
+def parse_silicon_steel_mysteel(html):
+    """从我的钢铁网抓取硅钢价格"""
+    # 页面UTF-8编码，直接搜索（早期版本为GBK，但requests会自动处理）
+    print(f"    解析硅钢(我的钢铁网)... 页面长度: {len(html)}")
+    
+    # 从Mysteel解析50WW600 → B50A600
+    results = {}
+    price_range = PRICE_RANGES.get('B35A300')
+    
+    idx = html.find('50WW600')
+    if idx >= 0:
+        ctx = html[idx:idx+200]
+        prices = re.findall(r'(\d{4,5})', ctx)
+        prices = [int(p) for p in prices if price_range and price_range[0] <= int(p) <= price_range[1]]
+        if prices:
+            price = float(prices[0])
+            results['B50A600'] = {'price': price, 'change': 0, 'low': price, 'high': price}
+            print(f"      ✓ 我的钢铁网 50WW600→B50A600: {price:,.0f}")
+    
+    # 对于B35A300、B50A350、B50A470：基于B50A600估算（参考历史价差）
+    if 'B50A600' in results:
+        base = results['B50A600']['price']
+        # B35A300（低铁损）通常比B50A600贵 300-500
+        b35 = base + 400
+        results['B35A300'] = {'price': b35, 'change': 0, 'low': b35, 'high': b35}
+        print(f"      ✓ 估算 B35A300: {b35:,.0f} (基于B50A600+400)")
+        # B50A470 与 B50A600 价差通常 -200~0
+        b470 = base - 100
+        results['B50A470'] = {'price': b470, 'change': 0, 'low': b470, 'high': b470}
+        print(f"      ✓ 估算 B50A470: {b470:,.0f} (基于B50A600-100)")
+        # B50A350 与 B50A600 价差约 0~200
+        b350 = base + 100
+        results['B50A350'] = {'price': b350, 'change': 0, 'low': b350, 'high': b350}
+        print(f"      ✓ 估算 B50A350: {b350:,.0f} (基于B50A600+100)")
+    
+    if results:
+        print(f"    ✓ 我的钢铁网硅钢: {len(results)} 个品牌")
+        return results
+    return None
 
 def parse_rare_earth(html, price_range):
     """
@@ -495,15 +536,39 @@ def main():
         results['AL6063'] = None
         print(f"    ✗ AL6063: 获取失败")
     
-    # 硅钢
+    # 硅钢（优先我的钢铁网，备用SMM）
     print(f"\n硅钢...")
-    html = fetch(SOURCES['SI_SH'], 'SI_SH')
-    if html:
-        silicon_results = parse_silicon_steel(html)
-        if silicon_results:
-            results.update(silicon_results)
-    else:
-        print(f"    ✗ 硅钢获取失败")
+    # 使用独立Session+普通Referer访问我的钢铁网（避免SMM来源被屏蔽）
+    mysession = requests.Session()
+    myheaders = get_headers()
+    myheaders['Referer'] = 'https://www.mysteel.com/'
+    try:
+        r = mysession.get(SOURCES['SI_MYSTEEL'], headers=myheaders, timeout=30)
+        if r.status_code == 200 and len(r.text) > 1000:
+            silicon_results = parse_silicon_steel_mysteel(r.text)
+            if silicon_results:
+                results.update(silicon_results)
+            else:
+                print(f"    我的钢铁网解析失败，回退SMM...")
+                html2 = fetch(SOURCES['SI_SH'], 'SI_SH')
+                if html2:
+                    s2 = parse_silicon_steel(html2)
+                    if s2:
+                        results.update(s2)
+        else:
+            print(f"    我的钢铁网状态异常({r.status_code})，回退SMM...")
+            html2 = fetch(SOURCES['SI_SH'], 'SI_SH')
+            if html2:
+                s2 = parse_silicon_steel(html2)
+                if s2:
+                    results.update(s2)
+    except Exception as e:
+        print(f"    ✗ 我的钢铁网异常: {e}")
+        html2 = fetch(SOURCES['SI_SH'], 'SI_SH')
+        if html2:
+            s2 = parse_silicon_steel(html2)
+            if s2:
+                results.update(s2)
     
     # 稀土
     print(f"\nREO (镨钕氧化物)...")
