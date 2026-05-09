@@ -48,7 +48,7 @@ async function loadNews() {
         const news = await resp.json();
         if (news && news.items && news.items.length > 0) {
             container.innerHTML = news.items.map(item => `
-                <div class="news-item border-l-4 ${item.tag === '稀土' ? 'border-l-purple-500' : item.tag === '硅钢' ? 'border-l-cyan-500' : 'border-l-amber-500'} pl-3 py-2 hover:bg-gray-50 rounded cursor-pointer transition-colors" onclick="window.open('${item.url}','_blank')">
+                <div class="news-item border-l-4 ${item.tag === '稀土' ? 'border-l-purple-500' : item.tag === '硅钢' ? 'border-l-cyan-500' : item.tag === '有色金属' ? 'border-l-amber-500' : 'border-l-gray-400'} pl-3 py-2 hover:bg-gray-50 rounded cursor-pointer transition-colors" onclick="window.open('${item.url}','_blank')">
                     <div class="text-sm text-gray-800 font-medium leading-snug">${item.title}</div>
                     <div class="text-xs text-gray-400 mt-1 flex items-center">
                         <span class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">${item.tag}</span>

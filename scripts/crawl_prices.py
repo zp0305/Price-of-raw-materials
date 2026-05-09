@@ -499,43 +499,73 @@ def save_data(results, data):
     return data
 
 def scrape_industry_news():
-    """从我的钢铁网抓取行业资讯"""
+    """从多个来源抓取行业资讯（每类2-3条）"""
     print(f"\n行业资讯...")
+    all_items = []
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    
+    # 来源1：长江有色金属网（铜/铝/稀土新闻）
     try:
         s = requests.Session()
-        r = s.get('https://guigang.mysteel.com/', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
-        if r.status_code != 200:
-            print(f"    ✗ 获取失败: {r.status_code}")
-            return
-        
-        html = r.text
-        # 提取新闻标题和链接
-        articles = re.findall(r'<a[^>]*href="(https?://gc\.mysteel\.com[^"]+)"[^>]*title="([^"]*)"', html)
-        items = []
-        for url, title in articles[:10]:
-            t = title.strip()
-            if len(t) > 8:
-                # 修正HTML实体编码问题
-                t = t.encode('latin1').decode('utf-8', errors='replace')
-                # 分类标签
-                tag = '硅钢'
-                if any(kw in t for kw in ['稀土', '磁']):
-                    tag = '稀土'
-                elif any(kw in t for kw in ['铜', '铝', '有色']):
-                    tag = '有色金属'
-                # 日期从URL中提取（格式/YYMMDD/）
-                date_m = re.search(r'/2(\d{5})/', url)
-                date_str = f'2026-{date_m.group(1)[:2]}-{date_m.group(1)[2:4]}' if date_m else datetime.now().strftime('%Y-%m-%d')
-                items.append({'title': t, 'url': url, 'tag': tag, 'date': date_str})
-        
-        if items:
-            with open(DATA_DIR / "industry.json", 'w', encoding='utf-8') as f:
-                json.dump({'update_time': datetime.now().strftime('%Y-%m-%d %H:%M'), 'items': items}, f, ensure_ascii=False, indent=2)
-            print(f"    ✓ 获 {len(items)} 条行业资讯")
-        else:
-            print(f"    ✗ 未解析到资讯")
+        r = s.get('https://www.ccmn.cn/', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
+        if r.status_code == 200:
+            for url, title in re.findall(r'<a[^>]*href="(https?://www\.ccmn\.cn[^"]+)"[^>]*title="([^"]*)"', r.text):
+                t = title.strip()
+                if len(t) > 10:
+                    tag = '铜' if '铜' in t else ('铝' if '铝' in t else ('稀土' if any(kw in t for kw in ['稀土','磁','钕','镨','镝','铽']) else '有色金属'))
+                    all_items.append({'title': t, 'url': url, 'tag': tag, 'date': today_str})
     except Exception as e:
-        print(f"    ✗ 异常: {e}")
+        print(f"    ⚠ 长江有色: {e}")
+    
+    # 来源2：上海有色资讯（金属行情）
+    try:
+        s2 = requests.Session()
+        r2 = s2.get('https://news.smm.cn/', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
+        if r2.status_code == 200:
+            for url, t in re.findall(r'<a[^>]*href="(https?://news\.smm\.cn[^"]+)"[^>]*>([^<]{15,80})</a>', r2.text):
+                t = t.strip()
+                if len(t) > 10:
+                    tag = '铜' if '铜' in t else ('铝' if '铝' in t else ('稀土' if any(kw in t for kw in ['稀土','磁','钕','镨','镝','铽']) else '有色金属'))
+                    all_items.append({'title': t, 'url': url, 'tag': tag, 'date': today_str})
+    except Exception as e:
+        print(f"    ⚠ 有色资讯: {e}")
+    
+    # 来源2：我的钢铁网硅钢专页（补充硅钢资讯）
+    try:
+        s2 = requests.Session()
+        r2 = s2.get('https://guigang.mysteel.com/', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
+        if r2.status_code == 200:
+            for url, title in re.findall(r'<a[^>]*href="(https?://gc\.mysteel\.com[^"]+)"[^>]*title="([^"]*)"', r2.text):
+                t = title.strip()
+                if len(t) > 8:
+                    t = t.encode('latin1').decode('utf-8', errors='replace')
+                    date_m = re.search(r'/2(\d{5})/', url)
+                    date_str = f'2026-{date_m.group(1)[:2]}-{date_m.group(1)[2:4]}' if date_m else today_str
+                    all_items.append({'title': t, 'url': url, 'tag': '硅钢', 'date': date_str})
+    except:
+        pass
+    
+    # 按分类去重，每类最多3条
+    seen_urls = set()
+    final = []
+    for tag in ['铜', '铝', '稀土', '硅钢']:
+        count = 0
+        for item in all_items:
+            if item['tag'] != tag or item['url'] in seen_urls:
+                continue
+            seen_urls.add(item['url'])
+            final.append(item)
+            count += 1
+            if count >= 3:
+                break
+    
+    if final:
+        with open(DATA_DIR / "industry.json", 'w', encoding='utf-8') as f:
+            json.dump({'update_time': datetime.now().strftime('%Y-%m-%d %H:%M'), 'items': final}, f, ensure_ascii=False, indent=2)
+        cats = ', '.join([f'{k}={sum(1 for x in final if x["tag"]==k)}' for k in ['铜','铝','稀土','硅钢']])
+        print(f"    ✓ {len(final)} 条: {cats}")
+    else:
+        print(f"    ✗ 未获取到资讯")
 
 def main():
     print("=" * 70)
