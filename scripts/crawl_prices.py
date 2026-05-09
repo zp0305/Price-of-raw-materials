@@ -542,12 +542,28 @@ def scrape_industry_news():
     except:
         pass
     
-    # 来源2：我的钢铁网硅钢专页（补充硅钢资讯）
+    # 来源4：SMM资讯搜索（按稀土/镨钕/镝铁等关键词搜索）
+    for kw_name, kw_url in [
+        ('稀土', 'https://news.smm.cn/search?keyword=' + '%E7%A8%80%E5%9C%9F'),
+        ('镨钕', 'https://news.smm.cn/search?keyword=' + '%E9%95%A8%E9%92%95'),
+    ]:
+        try:
+            s4 = requests.Session()
+            r4 = s4.get(kw_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
+            if r4.status_code == 200:
+                for url, title in re.findall(r'<a[^>]*href="(/news/\d+[^"]*)"[^>]*>([^<]{15,80})</a>', r4.text):
+                    t = re.sub(r'<[^>]+>', '', title).strip()
+                    if len(t) > 10:
+                        all_items.append({'title': t, 'url': 'https://news.smm.cn' + url, 'tag': '稀土', 'date': today_str})
+        except:
+            pass
+    
+    # 来源5：我的钢铁网硅钢专页（补充硅钢资讯）
     try:
-        s2 = requests.Session()
-        r2 = s2.get('https://guigang.mysteel.com/', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
-        if r2.status_code == 200:
-            for url, title in re.findall(r'<a[^>]*href="(https?://gc\.mysteel\.com[^"]+)"[^>]*title="([^"]*)"', r2.text):
+        s5 = requests.Session()
+        r5 = s5.get('https://guigang.mysteel.com/', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
+        if r5.status_code == 200:
+            for url, title in re.findall(r'<a[^>]*href="(https?://gc\.mysteel\.com[^"]+)"[^>]*title="([^"]*)"', r5.text):
                 t = title.strip()
                 if len(t) > 8:
                     t = t.encode('latin1').decode('utf-8', errors='replace')
