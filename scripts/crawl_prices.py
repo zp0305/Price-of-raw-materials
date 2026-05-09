@@ -498,6 +498,45 @@ def save_data(results, data):
     print(f"\n✓ 保存完成 ({len(today_data)} 种材料)")
     return data
 
+def scrape_industry_news():
+    """从我的钢铁网抓取行业资讯"""
+    print(f"\n行业资讯...")
+    try:
+        s = requests.Session()
+        r = s.get('https://guigang.mysteel.com/', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
+        if r.status_code != 200:
+            print(f"    ✗ 获取失败: {r.status_code}")
+            return
+        
+        html = r.text
+        # 提取新闻标题和链接
+        articles = re.findall(r'<a[^>]*href="(https?://gc\.mysteel\.com[^"]+)"[^>]*title="([^"]*)"', html)
+        items = []
+        for url, title in articles[:10]:
+            t = title.strip()
+            if len(t) > 8:
+                # 修正HTML实体编码问题
+                t = t.encode('latin1').decode('utf-8', errors='replace')
+                # 分类标签
+                tag = '硅钢'
+                if any(kw in t for kw in ['稀土', '磁']):
+                    tag = '稀土'
+                elif any(kw in t for kw in ['铜', '铝', '有色']):
+                    tag = '有色金属'
+                # 日期从URL中提取（格式/YYMMDD/）
+                date_m = re.search(r'/2(\d{5})/', url)
+                date_str = f'2026-{date_m.group(1)[:2]}-{date_m.group(1)[2:4]}' if date_m else datetime.now().strftime('%Y-%m-%d')
+                items.append({'title': t, 'url': url, 'tag': tag, 'date': date_str})
+        
+        if items:
+            with open(DATA_DIR / "industry.json", 'w', encoding='utf-8') as f:
+                json.dump({'update_time': datetime.now().strftime('%Y-%m-%d %H:%M'), 'items': items}, f, ensure_ascii=False, indent=2)
+            print(f"    ✓ 获 {len(items)} 条行业资讯")
+        else:
+            print(f"    ✗ 未解析到资讯")
+    except Exception as e:
+        print(f"    ✗ 异常: {e}")
+
 def main():
     print("=" * 70)
     print("原材料价格爬虫 - v6 (表格解析优化版)")
@@ -624,6 +663,7 @@ def main():
     
     if success > 0:
         save_data(results, data)
+        scrape_industry_news()
         return 0
     return 1
 

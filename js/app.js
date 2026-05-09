@@ -24,6 +24,44 @@ async function init() {
     initDateInputs();
     updateTimestamp();
     initOrientationDetection();
+    checkWeekend();
+    loadNews();
+}
+
+// 周末/节假日检测
+function checkWeekend() {
+    const day = new Date().getDay();
+    const notice = document.getElementById('weekend-notice');
+    if (day === 0 || day === 6) {
+        const names = ['日', '一', '二', '三', '四', '五', '六'];
+        document.getElementById('weekend-notice-text').textContent = 
+            `今日为星期${names[day]}，市场休市，价格显示最近交易日数据`;
+        notice.classList.remove('hidden');
+    }
+}
+
+// 加载行业资讯
+async function loadNews() {
+    const container = document.getElementById('news-container');
+    try {
+        const resp = await fetch('data/industry.json');
+        const news = await resp.json();
+        if (news && news.items && news.items.length > 0) {
+            container.innerHTML = news.items.map(item => `
+                <div class="news-item border-l-4 ${item.tag === '稀土' ? 'border-l-purple-500' : item.tag === '硅钢' ? 'border-l-cyan-500' : 'border-l-amber-500'} pl-3 py-2 hover:bg-gray-50 rounded cursor-pointer transition-colors" onclick="window.open('${item.url}','_blank')">
+                    <div class="text-sm text-gray-800 font-medium leading-snug">${item.title}</div>
+                    <div class="text-xs text-gray-400 mt-1 flex items-center">
+                        <span class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">${item.tag}</span>
+                        <span class="ml-2">${item.date}</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">暂无资讯</div>';
+        }
+    } catch(e) {
+        container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">暂无资讯</div>';
+    }
 }
 
 // 横屏检测（仅手机端生效，不影响桌面显示器）
