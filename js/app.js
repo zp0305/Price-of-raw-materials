@@ -46,22 +46,49 @@ async function loadNews() {
     try {
         const resp = await fetch('data/industry.json');
         const news = await resp.json();
-        if (news && news.items && news.items.length > 0) {
-            container.innerHTML = news.items.map(item => `
-                <div class="news-item border-l-4 ${item.tag === '稀土' ? 'border-l-purple-500' : item.tag === '硅钢' ? 'border-l-cyan-500' : item.tag === '有色金属' ? 'border-l-amber-500' : 'border-l-gray-400'} pl-3 py-2 hover:bg-gray-50 rounded cursor-pointer transition-colors" onclick="window.open('${item.url}','_blank')">
-                    <div class="text-sm text-gray-800 font-medium leading-snug">${item.title}</div>
-                    <div class="text-xs text-gray-400 mt-1 flex items-center">
-                        <span class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">${item.tag}</span>
-                        <span class="ml-2">${item.date}</span>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">暂无资讯</div>';
-        }
+        window._allNews = news.items || [];
+        renderNews('全部');
     } catch(e) {
         container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">暂无资讯</div>';
     }
+}
+
+// 渲染/筛选资讯
+function renderNews(tag) {
+    const container = document.getElementById('news-container');
+    const items = window._allNews || [];
+    
+    // 更新标签切换样式
+    document.querySelectorAll('.news-tag').forEach(btn => {
+        if (btn.dataset.tag === tag) {
+            btn.classList.add('bg-blue-500', 'text-white');
+            btn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+        } else {
+            btn.classList.remove('bg-blue-500', 'text-white');
+            btn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+        }
+    });
+    
+    const filtered = tag === '全部' ? items : items.filter(i => i.tag === tag);
+    
+    if (filtered.length === 0) {
+        container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">暂无相关资讯</div>';
+        return;
+    }
+    
+    container.innerHTML = filtered.map(item => `
+        <div class="news-item border-l-4 ${item.tag === '稀土' ? 'border-l-purple-500' : item.tag === '硅钢' ? 'border-l-cyan-500' : item.tag === '有色金属' ? 'border-l-amber-500' : 'border-l-amber-500'} pl-3 py-2 hover:bg-gray-50 rounded cursor-pointer transition-colors" onclick="window.open('${item.url}','_blank')">
+            <div class="text-sm text-gray-800 font-medium leading-snug">${item.title}</div>
+            <div class="text-xs text-gray-400 mt-1 flex items-center">
+                <span class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">${item.tag}</span>
+                <span class="ml-2">${item.date}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function filterNews(tag) {
+    renderNews(tag);
 }
 
 // 横屏检测（仅手机端生效，不影响桌面显示器）

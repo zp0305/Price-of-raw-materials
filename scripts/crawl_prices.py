@@ -504,7 +504,7 @@ def scrape_industry_news():
     all_items = []
     today_str = datetime.now().strftime('%Y-%m-%d')
     
-    # 来源1：长江有色金属网（铜/铝/稀土新闻）
+    # 来源1：长江有色金属网
     try:
         s = requests.Session()
         r = s.get('https://www.ccmn.cn/', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
@@ -512,7 +512,7 @@ def scrape_industry_news():
             for url, title in re.findall(r'<a[^>]*href="(https?://www\.ccmn\.cn[^"]+)"[^>]*title="([^"]*)"', r.text):
                 t = title.strip()
                 if len(t) > 10:
-                    tag = '铜' if '铜' in t else ('铝' if '铝' in t else ('稀土' if any(kw in t for kw in ['稀土','磁','钕','镨','镝','铽']) else '有色金属'))
+                    tag = '稀土' if any(kw in t for kw in ['稀土','磁','钕','镨','镝','铽']) else ('铜' if '铜' in t else ('铝' if '铝' in t else '有色金属'))
                     all_items.append({'title': t, 'url': url, 'tag': tag, 'date': today_str})
     except Exception as e:
         print(f"    ⚠ 长江有色: {e}")
@@ -525,10 +525,22 @@ def scrape_industry_news():
             for url, t in re.findall(r'<a[^>]*href="(https?://news\.smm\.cn[^"]+)"[^>]*>([^<]{15,80})</a>', r2.text):
                 t = t.strip()
                 if len(t) > 10:
-                    tag = '铜' if '铜' in t else ('铝' if '铝' in t else ('稀土' if any(kw in t for kw in ['稀土','磁','钕','镨','镝','铽']) else '有色金属'))
+                    tag = '稀土' if any(kw in t for kw in ['稀土','磁','钕','镨','镝','铽']) else ('铜' if '铜' in t else ('铝' if '铝' in t else '有色金属'))
                     all_items.append({'title': t, 'url': url, 'tag': tag, 'date': today_str})
     except Exception as e:
         print(f"    ⚠ 有色资讯: {e}")
+    
+    # 来源3：SMM稀土价格页（补充稀土行情标题）
+    try:
+        s3 = requests.Session()
+        r3 = s3.get('https://hq.smm.cn/h5/rare-earth-metal-oxides-price', headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
+        if r3.status_code == 200:
+            desc = re.search(r'<meta[^>]*name="description"[^>]*content="([^"]*)"', r3.text)
+            if desc:
+                meta = desc.group(1)[:100]
+                all_items.append({'title': '稀土行情: ' + meta, 'url': 'https://hq.smm.cn/h5/rare-earth-metal-oxides-price', 'tag': '稀土', 'date': today_str})
+    except:
+        pass
     
     # 来源2：我的钢铁网硅钢专页（补充硅钢资讯）
     try:
