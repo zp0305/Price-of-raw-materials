@@ -1,9 +1,15 @@
 {
-  "update_time": "2026-05-22 15:01",
+  "update_time": "2026-05-22 15:37",
   "items": [
     {
       "title": "年产120万吨阴极铜，这家企业要打造中国最美铜冶炼厂",
       "url": "https://www.ccmn.cn/news/ZX018/202605/e75a907c2a484ad984cd439426e862dc.html",
+      "tag": "铜",
+      "date": "2026-05-22"
+    },
+    {
+      "title": "● 长江有色：22日铜价下跌   整体市况冷淡",
+      "url": "https://www.ccmn.cn/news/ZX003/202605/058a6c9a58214a2bae6f7a3b160abe6c.html",
       "tag": "铜",
       "date": "2026-05-22"
     },
@@ -14,26 +20,20 @@
       "date": "2026-05-22"
     },
     {
-      "title": "● 长江有色：国内消费恐高需求疲弱  22日铜价或下跌",
-      "url": "https://www.ccmn.cn/news/ZX003/202605/9526cfc4001d435ea3921171ce8a856e.html",
-      "tag": "铜",
-      "date": "2026-05-22"
-    },
-    {
-      "title": "● 铝市惊现&ldquo;冰火两重天&rdquo;：LME库存创20年新低，国内社库拐点终现",
-      "url": "https://www.ccmn.cn/news/ZX003/202605/eb5883b2f1104658a3f10ec3bfe0feeb.html",
+      "title": "● 长江有色：22日铝价下跌   今日现货市场表现疲弱",
+      "url": "https://www.ccmn.cn/news/ZX003/202605/e04f1d41a8df4d8eab91d3330ac2fc17.html",
       "tag": "铝",
       "date": "2026-05-22"
     },
     {
-      "title": "● 长江有色: 海外供紧支撑但国内高库存及弱消费施压  22日铝价或涨跌不大",
-      "url": "https://www.ccmn.cn/news/ZX003/202605/c6fc1d27d15743cfa976825a9eec0d73.html",
+      "title": "● 长江有色：22日氧化铝期价收跌0.07%  整体成交反馈不佳",
+      "url": "https://www.ccmn.cn/news/ZX003/202605/4badcb2bab514fed891c9869c63f6eea.html",
       "tag": "铝",
       "date": "2026-05-22"
     },
     {
-      "title": "● LME金属涨跌不一 伦铝连涨三日",
-      "url": "https://www.ccmn.cn/news/ZX003/202605/167484b05307488f84895ecc7351976f.html",
+      "title": "● 长江有色：22日铸造铝期价微涨0.06%  现货市场成交整体偏冷",
+      "url": "https://www.ccmn.cn/news/ZX003/202605/793e02fadc56487abeba9e4e666077c4.html",
       "tag": "铝",
       "date": "2026-05-22"
     },
