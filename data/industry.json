@@ -1,9 +1,15 @@
 {
-  "update_time": "2026-06-03 16:48",
+  "update_time": "2026-06-03 19:56",
   "items": [
     {
       "title": "铜价冲高回撤：宏观逆风与产业&ldquo;强预期弱现实&rdquo;的激烈交锋",
       "url": "https://www.ccmn.cn/news/ZX003/202606/dec0985972474d20b3c04ae845b497c7.html",
+      "tag": "铜",
+      "date": "2026-06-03"
+    },
+    {
+      "title": "● 有色盘面现&ldquo;抗压&rdquo;分化：锌凭基本面硬刚强美元，铜铝受制宏观情绪",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/f06b2383e631498d99709fe75ea94bd9.html",
       "tag": "铜",
       "date": "2026-06-03"
     },
@@ -14,9 +20,9 @@
       "date": "2026-06-03"
     },
     {
-      "title": "● 铜日评：伊朗封锁霍尔木兹海峡引爆油价 沪铜飙升能否站稳10.6万",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/962879b9bca54a218c863793439cb5db.html",
-      "tag": "铜",
+      "title": "几内亚掐住75%中国铝土矿！铝价还要涨？",
+      "url": "https://www.ccmn.cn/news/ZX018/202606/e20c932cfe834d7b9bdb3c5daa931f0d.html",
+      "tag": "铝",
       "date": "2026-06-03"
     },
     {
@@ -32,21 +38,15 @@
       "date": "2026-06-03"
     },
     {
-      "title": "● 长江有色：3日铸造铝期价微跌0.11%   基本面偏弱限制冲高强度",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/bce4eee77abc4090a0dedf798b80faac.html",
-      "tag": "铝",
-      "date": "2026-06-03"
-    },
-    {
-      "title": "催化材料90亿市场、永磁材料60%占比，稀土下游还有多大蛋糕？",
-      "url": "https://www.ccmn.cn/news/ZX018/202606/7973f004fafa47cdbd39166371d9f6ad.html",
-      "tag": "稀土",
-      "date": "2026-06-03"
-    },
-    {
       "title": "稀土行情: 上海有色网稀土氧化物价格专区为用户提供今日最新稀土金属氧化物价格行情,包括氧化镧价格、氧化铈价格、氧化镨价格、氧化钕价格、镨钕氧化物价格、氧化钐价格、氧化铕价格、氧化钆价格、氧化铽价格、氧化镝价格、氧",
       "url": "https://hq.smm.cn/h5/rare-earth-metal-oxides-price",
       "tag": "稀土",
+      "date": "2026-06-03"
+    },
+    {
+      "title": "Mysteel日报：国内硅钢市场现货价格整体偏稳 成交表现一般",
+      "url": "https://gc.mysteel.com/a/26060317/75C8A3B6DF67BF7F.html",
+      "tag": "硅钢",
       "date": "2026-06-03"
     },
     {
@@ -58,12 +58,6 @@
     {
       "title": "Mysteel日报：国内硅钢市场现货报价部分上调",
       "url": "https://gc.mysteel.com/a/26060117/59BB2B0E03416B7C.html",
-      "tag": "硅钢",
-      "date": "2026-06-03"
-    },
-    {
-      "title": "Mysteel日报：国内硅钢市场现货价格延续弱稳",
-      "url": "https://gc.mysteel.com/a/26052917/9F2DB177254BC435.html",
       "tag": "硅钢",
       "date": "2026-06-03"
     }
