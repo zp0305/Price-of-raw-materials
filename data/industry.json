@@ -1,9 +1,15 @@
 {
-  "update_time": "2026-06-24 05:43",
+  "update_time": "2026-06-24 15:00",
   "items": [
     {
-      "title": "沪铜大跌1220元 | 矿紧与需弱的结构性博弈",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/594a67d5a9fa4e1dbbad39bb30fba527.html",
+      "title": "美元强势逼空，矿端紧缺托底&mdash;&mdash;铜铝锌多空撕裂与节奏抉择，今日铜价大跌940元/吨",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/7cad1bd8824c4123bed578f1dca19b00.html",
+      "tag": "铜",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "● 长江有色：强美元+传统淡季弱消施压 24日铜价或大跌",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/7cf0d8a8ccf04dfda09327d8fb7b7c2a.html",
       "tag": "铜",
       "date": "2026-06-24"
     },
@@ -14,9 +20,15 @@
       "date": "2026-06-24"
     },
     {
-      "title": "● 宏观鹰派与产业&ldquo;硬缺口&rdquo;博弈：铜铝锌高位震荡，今日长江1#铜下跌240元/吨",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/d5107739ab924d68a1bb3fd3d326d38a.html",
-      "tag": "铜",
+      "title": "● 铝价被&quot;远期恐惧&quot;绑架，但产业账本不支持深跌",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/20626d54a1e34d1bbf70b02a42a91980.html",
+      "tag": "铝",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "● 长江有色: 鹰派加息预期+资金锁定获利压制  24日铝价或下跌",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/170aeced70284630b1dfb3e21ebb2e7f.html",
+      "tag": "铝",
       "date": "2026-06-24"
     },
     {
@@ -26,21 +38,27 @@
       "date": "2026-06-24"
     },
     {
-      "title": "● 长江有色：23日铝价下跌   下游以刚需逢低补库为主",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/ca64c5ac75864fb59c8439289cb72db9.html",
-      "tag": "铝",
-      "date": "2026-06-24"
-    },
-    {
-      "title": "● 长江有色：23日氧化铝期价收跌2.74%   今日整体成交氛围较昨日有所回升",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/e3dfee7c643d472783553d089d110334.html",
-      "tag": "铝",
-      "date": "2026-06-24"
-    },
-    {
       "title": "稀土行情: 上海有色网稀土氧化物价格专区为用户提供今日最新稀土金属氧化物价格行情,包括氧化镧价格、氧化铈价格、氧化镨价格、氧化钕价格、镨钕氧化物价格、氧化钐价格、氧化铕价格、氧化钆价格、氧化铽价格、氧化镝价格、氧",
       "url": "https://hq.smm.cn/h5/rare-earth-metal-oxides-price",
       "tag": "稀土",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "Mysteel日报：国内无取向硅钢价格偏弱 成交情况不佳",
+      "url": "https://gc.mysteel.com/a/26062317/70C17092DE8BCFF7.html",
+      "tag": "硅钢",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "Mysteel日报：国内无取向硅钢价格部分走弱 成交情况一般",
+      "url": "https://gc.mysteel.com/a/26062217/B1DEA07AA43FCC81.html",
+      "tag": "硅钢",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "海关总署：2026年5月我国无取向硅钢出口同比下滑24.68%",
+      "url": "https://gc.mysteel.com/a/26062211/01DB49FB8EF14ACE.html",
+      "tag": "硅钢",
       "date": "2026-06-24"
     }
   ]
