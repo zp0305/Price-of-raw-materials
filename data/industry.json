@@ -1,9 +1,15 @@
 {
-  "update_time": "2026-06-30 15:07",
+  "update_time": "2026-06-30 15:43",
   "items": [
     {
       "title": "宏观鹰派预期压制与产业新旧动能转换下的结构性分化，今日铜价下跌230元/吨",
       "url": "https://www.ccmn.cn/news/ZX003/202606/95346fbf161040cabc5e88da73a8efb0.html",
+      "tag": "铜",
+      "date": "2026-06-30"
+    },
+    {
+      "title": "● 长江有色：30日铜价下跌   下游采购受淡季制约",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/6f0806c762a046059f8c78d76134664d.html",
       "tag": "铜",
       "date": "2026-06-30"
     },
@@ -14,26 +20,20 @@
       "date": "2026-06-30"
     },
     {
-      "title": "● 长江有色：美联储加息信号明确支撑美元高位震荡  30日铜价或下跌",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/939ebc7effa048ceac43be22cff84c36.html",
-      "tag": "铜",
-      "date": "2026-06-30"
-    },
-    {
-      "title": "● 长江有色: 高通胀叠加加息预期持续打压   30日铝价或大跌",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/656efe71ce104f06b4387a2526dce9a2.html",
+      "title": "● 长江有色：30日铝价暴跌    下游逢低集中补库",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/d8e53b71560443bd9db64488c07dd00d.html",
       "tag": "铝",
       "date": "2026-06-30"
     },
     {
-      "title": "● LME金属普遍下跌  伦铝创下逾四个月新低",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/715ebc9737a14e22a4cd6a3693a9cc21.html",
+      "title": "● 长江有色：30日氧化铝期价收跌1.28%   交投氛围寡淡",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/e8979d9c6484494e9887e4d917bd6a19.html",
       "tag": "铝",
       "date": "2026-06-30"
     },
     {
-      "title": "● 长江有色：29日铝价续涨   现货升贴水表现平稳",
-      "url": "https://www.ccmn.cn/news/ZX003/202606/7dcd182691c44992ae44632649da7a2d.html",
+      "title": "● 长江有色：30日铸造铝期价收跌1.01%   刚需补货放量略有增加",
+      "url": "https://www.ccmn.cn/news/ZX003/202606/39543a8d01494870a77f2fd77122a62f.html",
       "tag": "铝",
       "date": "2026-06-30"
     },
@@ -41,6 +41,12 @@
       "title": "稀土行情: 上海有色网稀土氧化物价格专区为用户提供今日最新稀土金属氧化物价格行情,包括氧化镧价格、氧化铈价格、氧化镨价格、氧化钕价格、镨钕氧化物价格、氧化钐价格、氧化铕价格、氧化钆价格、氧化铽价格、氧化镝价格、氧",
       "url": "https://hq.smm.cn/h5/rare-earth-metal-oxides-price",
       "tag": "稀土",
+      "date": "2026-06-30"
+    },
+    {
+      "title": "Mysteel：无取向硅钢价格承压背后 下游需求“弱”在何处？",
+      "url": "https://gc.mysteel.com/a/26063015/A47E85DA8B3D7650.html",
+      "tag": "硅钢",
       "date": "2026-06-30"
     },
     {
@@ -52,12 +58,6 @@
     {
       "title": "Mysteel日报：国内无取向硅钢价格弱稳 整体成交表现不佳",
       "url": "https://gc.mysteel.com/a/26062617/3C2BBDFC5E958092.html",
-      "tag": "硅钢",
-      "date": "2026-06-30"
-    },
-    {
-      "title": "Mysteel日报：国内无取向硅钢价格偏稳 整体成交表现一般",
-      "url": "https://gc.mysteel.com/a/26062517/EDB8AB8927AAC8A1.html",
       "tag": "硅钢",
       "date": "2026-06-30"
     }
