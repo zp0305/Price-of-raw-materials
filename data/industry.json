@@ -1,6 +1,12 @@
 {
-  "update_time": "2026-07-02 14:54",
+  "update_time": "2026-07-02 15:23",
   "items": [
+    {
+      "title": "● 长江有色：2日铜价小涨   现货维持升水报价",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/969d74243db9429fb7e359c884eb773e.html",
+      "tag": "铜",
+      "date": "2026-07-02"
+    },
     {
       "title": "● 56亿美元大甩卖：South32&ldquo;弃铝追铜&rdquo;背后的周期重构",
       "url": "https://www.ccmn.cn/news/ZX018/202607/51119497aab9467daf47f0f4c18e4425.html",
@@ -14,26 +20,20 @@
       "date": "2026-07-02"
     },
     {
-      "title": "● 铜价能否重演1月&ldquo;狂飙&rdquo;行情？",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/8de28e70859243d6ac8fd1a600b083fa.html",
-      "tag": "铜",
-      "date": "2026-07-02"
-    },
-    {
-      "title": "● 长江有色: 国内铝库去化叠加下游刚需托底   2日铝价或涨跌有限",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/057e3e0512494c309e6d732e26d03fb5.html",
+      "title": "● 长江有色：2日铝价大涨    今日刚需成交乏力",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/eee9e646a4884202af27422047aee9a4.html",
       "tag": "铝",
       "date": "2026-07-02"
     },
     {
-      "title": "● 长江有色：1日铝价大跌    市场交投表现欠佳",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/4420e9e21b52411c95cea71dc0f51240.html",
+      "title": "● 长江有色：2日氧化铝期价收跌1.87%   整体成交反馈寡淡",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/8235a76b72884eb4a89f90990588ce0b.html",
       "tag": "铝",
       "date": "2026-07-02"
     },
     {
-      "title": "● 长江有色：1日氧化铝期价收跌0.14%   整体交投冷淡",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/05df94bfa5994a758c18b2e646c6f27f.html",
+      "title": "● 长江有色：2日铸造铝期价收涨0.04%   观望主导下全天成交量受限",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/63e452c14afd454a814c046011cd789e.html",
       "tag": "铝",
       "date": "2026-07-02"
     },
