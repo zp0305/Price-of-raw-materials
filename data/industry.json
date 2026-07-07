@@ -1,6 +1,12 @@
 {
-  "update_time": "2026-07-07 15:00",
+  "update_time": "2026-07-07 15:29",
   "items": [
+    {
+      "title": "● 长江有色：7日铜价小跌   整体交投氛围偏淡",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/20e5db84d83c481db7bb283f365fff94.html",
+      "tag": "铜",
+      "date": "2026-07-07"
+    },
     {
       "title": "● 早间观察 | 有色三杰&ldquo;冰火&rdquo;分化，铜小跌60元、锌强势上涨260元，铝价略逊一筹",
       "url": "https://www.ccmn.cn/news/ZX003/202607/d2a4a0d587874b7482cf2a6a53671f78.html",
@@ -14,26 +20,20 @@
       "date": "2026-07-07"
     },
     {
-      "title": "● 【铜早评】LME库存连降叠加伦铜收涨，预计现货铜上涨",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/a078f3d367324d9d87ea303ec6fd9ca1.html",
-      "tag": "铜",
-      "date": "2026-07-07"
-    },
-    {
       "title": "铝价短期企稳修复，多重博弈下运行区间明确",
       "url": "https://www.ccmn.cn/news/ZX003/202607/829736a65ad44314a0dab4acde2fbd0a.html",
       "tag": "铝",
       "date": "2026-07-07"
     },
     {
-      "title": "● 长江有色: 成本托底+新兴产业提供需求韧性   7日铝价或上涨",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/0c24a4e728ae423993542976111c69db.html",
+      "title": "● 长江有色：7日铝价续涨    现货市场交投氛围不佳",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/5fea244260bc418a9fbcd59382c3ec52.html",
       "tag": "铝",
       "date": "2026-07-07"
     },
     {
-      "title": "● 铸造铝合金涨0.88%，ADC12重返23700！成本支撑+宏观情绪回暖共振",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/bc17a3ba458f4151a518bfa677b1dcab.html",
+      "title": "● 长江有色：7日氧化铝期价收跌0.59%  氧化铝厂现货交投意愿偏低",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/fcd5b5f5321d4af1a6a772293ba4f6ee.html",
       "tag": "铝",
       "date": "2026-07-07"
     },
@@ -41,6 +41,24 @@
       "title": "稀土行情: 上海有色网稀土氧化物价格专区为用户提供今日最新稀土金属氧化物价格行情,包括氧化镧价格、氧化铈价格、氧化镨价格、氧化钕价格、镨钕氧化物价格、氧化钐价格、氧化铕价格、氧化钆价格、氧化铽价格、氧化镝价格、氧",
       "url": "https://hq.smm.cn/h5/rare-earth-metal-oxides-price",
       "tag": "稀土",
+      "date": "2026-07-07"
+    },
+    {
+      "title": "Mysteel日报：国内无取向硅钢市场需求依旧乏力",
+      "url": "https://gc.mysteel.com/a/26070617/174BC9BB3D576FEC.html",
+      "tag": "硅钢",
+      "date": "2026-07-07"
+    },
+    {
+      "title": "Mysteel日报：国内无取向硅钢价格整体偏稳 成交表现不佳",
+      "url": "https://gc.mysteel.com/a/26070317/9CC48E56C8DD4EDC.html",
+      "tag": "硅钢",
+      "date": "2026-07-07"
+    },
+    {
+      "title": "Mysteel日报：国内无取向硅钢市场需求偏弱 成交表现不佳",
+      "url": "https://gc.mysteel.com/a/26070217/EDFCB72B81AEFFCE.html",
+      "tag": "硅钢",
       "date": "2026-07-07"
     }
   ]
