@@ -1,34 +1,40 @@
 {
-  "update_time": "2026-07-10 05:22",
+  "update_time": "2026-07-10 15:00",
   "items": [
     {
-      "title": "● 【铜日报】美元走弱去库支撑，铜升水走阔显示持货商挺价",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/b2848900b81f4f14ae094a75e854f6aa.html",
+      "title": "● 高息+地缘双重变量下：铜铝锌迎来结构性行情窗口，今日铜价大涨1460元/吨",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/54afec598075494da9b88fbf38bdb7f6.html",
       "tag": "铜",
       "date": "2026-07-10"
     },
     {
-      "title": "● 刚果（金）启动新一轮矿业法改革！强化资源管控，重塑铜钴全球供应格局",
-      "url": "https://www.ccmn.cn/news/ZX006/202607/1dd5a32b743a476ebfd93d63162d4dda.html",
+      "title": "● 【铜周报】矿端负TC+全球去库三重缺口下铜价还能涨多少？",
+      "url": "https://www.ccmn.cn/news/ZX002/202607/53d39e98e6fe427dbb6e1858ceb3fa1b.html",
       "tag": "铜",
       "date": "2026-07-10"
     },
     {
-      "title": "● 长江有色：7月9日铜市场十大热点事件盘点｜沪铜站上103000伦铜突破13380",
-      "url": "https://www.ccmn.cn/news/ZX018/202607/4c23c2d9cb5f46859cf13fa411b910c9.html",
+      "title": "● 长江有色：现货升水走强叠加市场炒作新兴需求韧性  10日铜价或大涨",
+      "url": "https://www.ccmn.cn/news/QH004/202607/051845c6db8644b1b3bc1f9ca38c618a.html",
       "tag": "铜",
       "date": "2026-07-10"
     },
     {
-      "title": "● 长江有色：7月9日铝市场十大热点事件盘点｜美伊局势扰动，伦铝站上3150美元",
-      "url": "https://www.ccmn.cn/news/ZX018/202607/eae8c40e09a04487ad1f414d12b9ec89.html",
+      "title": "● 长江有色: 地缘溢价升温+库存下滑支撑  10日铝价或上涨",
+      "url": "https://www.ccmn.cn/news/QH004/202607/e5cee473f46041628d1f14daed70371f.html",
       "tag": "铝",
       "date": "2026-07-10"
     },
     {
-      "title": "● 【铝日报】沪铝微跌0.04%！美元走弱难掩淡季，铝价横盘整理",
-      "url": "https://www.ccmn.cn/news/ZX003/202607/14b985ae8b914d53af4d6274dc28b2d0.html",
+      "title": "● 长江有色: 地缘溢价升温+库存下滑支撑  10日铝价或上涨",
+      "url": "https://www.ccmn.cn/news/ZX003/202607/87d2058e61044788b5ae11a8a5226daf.html",
       "tag": "铝",
+      "date": "2026-07-10"
+    },
+    {
+      "title": "● 供需双向逆转！废料紧缺叠加旺季来袭，稀土价格迎上行契机",
+      "url": "https://www.ccmn.cn/news/ZX018/202607/2b10890a796a4461ba0c7d083d8e4bf5.html",
+      "tag": "稀土",
       "date": "2026-07-10"
     },
     {
@@ -38,20 +44,20 @@
       "date": "2026-07-10"
     },
     {
-      "title": "Mysteel日报：国内无取向硅钢现货价格弱稳运行",
-      "url": "https://gc.mysteel.com/a/26070917/F86F3B5DBDD36FDD.html",
+      "title": "Mysteel快讯：BHP黑德兰港面临潜在罢工，铁矿石出口有中断风险",
+      "url": "https://gc.mysteel.com/a/26071009/61912BF1FA3F7B02.html",
       "tag": "硅钢",
       "date": "2026-07-10"
     },
     {
-      "title": "Mysteel全球板材市场日报：黑德兰港潜在罢工及蒙古口岸闭关引发原料供应扰动",
-      "url": "https://gc.mysteel.com/a/26070917/563F013243E00E19.html",
+      "title": "Mysteel快讯：欧洲议会委员会支持CBAM向下游扩展及临时脱碳基金",
+      "url": "https://gc.mysteel.com/a/26071009/1FF0BFB8D9792935.html",
       "tag": "硅钢",
       "date": "2026-07-10"
     },
     {
-      "title": "Mysteel：9日唐山钢市快报",
-      "url": "https://gc.mysteel.com/a/26070910/81D407BD23C092F6.html",
+      "title": "Mysteel快讯：印度SAIL与印尼Krakatau Steel签署MoU，拟合资建不锈钢板坯厂",
+      "url": "https://gc.mysteel.com/a/26071009/8B6976C01C9595E2.html",
       "tag": "硅钢",
       "date": "2026-07-10"
     }
