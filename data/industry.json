@@ -1,33 +1,39 @@
 {
-  "update_time": "2026-08-14 16:14",
+  "update_time": "2026-08-14 20:58",
   "items": [
     {
-      "title": "● 【铜日报】刚需采买谨慎，长江现货1#铜均价小跌",
-      "url": "https://www.ccmn.cn/news/ZX003/202608/5492c1dbffb54bc1829b530791c2fe62.html",
+      "title": "长江铜周评：加息阴霾半退潮，海峡未平铜价鏖战&ldquo;十万八&rdquo;关口",
+      "url": "https://www.ccmn.cn/news/ZX003/202608/80afb1320fe34dc6ae18868b4876b789.html",
       "tag": "铜",
       "date": "2026-08-14"
     },
     {
-      "title": "● 长江有色：14日铜价续跌   市场交投清淡",
-      "url": "https://www.ccmn.cn/news/ZX003/202608/95a1b070895e46bfad75f30936b19986.html",
+      "title": "● 长江铜业网：一周铜业资讯看点回顾（8.10-8.14）",
+      "url": "https://www.ccmn.cn/news/ZX018/202608/536835f907db46e5b016626180ecf482.html",
       "tag": "铜",
       "date": "2026-08-14"
     },
     {
-      "title": "● 【铸造铝合金日报】压铸订单偏弱 ADC12随铝价下跌",
-      "url": "https://www.ccmn.cn/news/ZX003/202608/56710f955d2a4589aca8763206c6233f.html",
+      "title": "● 智利推出矿业改革新政，减税提速吸引投资，冲刺 600 万吨铜年产量目标",
+      "url": "https://www.ccmn.cn/news/ZX018/202608/a864450f8aea467da0364d82d75ae3d0.html",
+      "tag": "铜",
+      "date": "2026-08-14"
+    },
+    {
+      "title": "● 铝周评：强现实与弱预期博弈，铝价在宏观不明下震荡调整收场",
+      "url": "https://www.ccmn.cn/news/ZX003/202608/0ff85d19d6c24a8fbb940a44e6eaa44b.html",
       "tag": "铝",
       "date": "2026-08-14"
     },
     {
-      "title": "● 【氧化铝日报】均价小跌 华东氧化铝报2740元",
-      "url": "https://www.ccmn.cn/news/ZX003/202608/66c36d668ab94e2db8e5a3cd233a2245.html",
+      "title": "● 多国收紧废铝出口政策，印度再生铝产业链遭遇原料供应双重冲击",
+      "url": "https://www.ccmn.cn/news/ZX018/202608/bd57b01247a24eba8b3a1cbac0f5a095.html",
       "tag": "铝",
       "date": "2026-08-14"
     },
     {
-      "title": "● 【铝日报】现货成交偏淡，长江A00铝均价下跌",
-      "url": "https://www.ccmn.cn/news/ZX003/202608/953a3284ef67433897433ce9fad5733a.html",
+      "title": "● 【铝周报】矿端偏紧与库存去化拉锯，长江现货A00铝价周內小跌",
+      "url": "https://www.ccmn.cn/news/ZX002/202608/8ff74c2e27424c9da403d3eb9a8b6f2a.html",
       "tag": "铝",
       "date": "2026-08-14"
     },
@@ -35,6 +41,12 @@
       "title": "稀土行情: 上海有色网稀土氧化物价格专区为用户提供今日最新稀土金属氧化物价格行情,包括氧化镧价格、氧化铈价格、氧化镨价格、氧化钕价格、镨钕氧化物价格、氧化钐价格、氧化铕价格、氧化钆价格、氧化铽价格、氧化镝价格、氧",
       "url": "https://hq.smm.cn/h5/rare-earth-metal-oxides-price",
       "tag": "稀土",
+      "date": "2026-08-14"
+    },
+    {
+      "title": "Mysteel日报：国内无取向硅钢价格部分下调，成交表现偏弱",
+      "url": "https://gc.mysteel.com/a/26081416/491D16C02DE798FE.html",
+      "tag": "硅钢",
       "date": "2026-08-14"
     },
     {
@@ -46,12 +58,6 @@
     {
       "title": "Mysteel日报：国内无取向硅钢价格持稳，市场需求偏弱",
       "url": "https://gc.mysteel.com/a/26081216/16A8FF8DAD461537.html",
-      "tag": "硅钢",
-      "date": "2026-08-14"
-    },
-    {
-      "title": "Mysteel日报：国内无取向硅钢价格整体偏稳，成交表现一般",
-      "url": "https://gc.mysteel.com/a/26081116/9FDAAB952AF17CE9.html",
       "tag": "硅钢",
       "date": "2026-08-14"
     }
