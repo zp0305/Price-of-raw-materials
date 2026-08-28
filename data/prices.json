@@ -1,20 +1,6 @@
 {
-  "update_time": "2026-08-28 05:38",
+  "update_time": "2026-08-28 12:17",
   "today": [
-    {
-      "code": "CU",
-      "name": "电解铜",
-      "price": 104768,
-      "change": 1176,
-      "date": "2026-08-28"
-    },
-    {
-      "code": "ADC12",
-      "name": "ADC12",
-      "price": 24172,
-      "change": 125,
-      "date": "2026-08-28"
-    },
     {
       "code": "B50A600",
       "name": "硅钢B50A600",
