@@ -1,9 +1,15 @@
 {
-  "update_time": "2026-09-01 17:01",
+  "update_time": "2026-09-01 20:21",
   "items": [
     {
       "title": "● 现货破11万而期铜止步：宏观压制与微观博弈下的&ldquo;冲高阻力&rdquo;",
       "url": "https://www.ccmn.cn/news/ZX003/202609/962609e782e54419a4d7b2eefd5e0827.html",
+      "tag": "铜",
+      "date": "2026-09-01"
+    },
+    {
+      "title": "● 长江现货铜现货升水收窄，下游采购能否延续回暖？",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/7a3420f8c0d34e1a9c51f6af3e4d545a.html",
       "tag": "铜",
       "date": "2026-09-01"
     },
@@ -14,26 +20,20 @@
       "date": "2026-09-01"
     },
     {
-      "title": "● 美元强、股市弱，有色为何反攻？锌价强势领涨740元/吨，铜破11万！",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/9111b7dbdb5a4e93b2dd23d878383e5f.html",
-      "tag": "铜",
-      "date": "2026-09-01"
-    },
-    {
-      "title": "● 长江有色：1日铝价上涨   市场呈现&ldquo;出多接少&rdquo;局面",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/d904eee163e0482c9879518f8ba5283f.html",
+      "title": "● 长江现货ADC12跟涨100元，铸造铝合金成交能否放量？",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/66b057dfdbba4ea69c81135986f4bf8f.html",
       "tag": "铝",
       "date": "2026-09-01"
     },
     {
-      "title": "● 长江有色：1日氧化铝期价反弹收涨0.34%   整体成交淡静",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/829f5fc1be1947b5b53661eac153d3db.html",
+      "title": "● 氧化铝现货持平，成本支撑能否守住底线？",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/cf9bc3c056284298b11cfb9ac1935195.html",
       "tag": "铝",
       "date": "2026-09-01"
     },
     {
-      "title": "● 长江有色：1日铸造铝期价收涨0.51%   下游畏高谨慎",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/e86c728e64fe42c4a227b2d07f3f0e5b.html",
+      "title": "● 铝现货转平水，供需双增下还能涨吗？",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/315d269d26214f2b903c340c0a135d9e.html",
       "tag": "铝",
       "date": "2026-09-01"
     },
