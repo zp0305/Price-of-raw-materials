@@ -1,39 +1,33 @@
 {
-  "update_time": "2026-09-02 06:28",
+  "update_time": "2026-09-02 16:02",
   "items": [
     {
-      "title": "● 现货破11万而期铜止步：宏观压制与微观博弈下的&ldquo;冲高阻力&rdquo;",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/962609e782e54419a4d7b2eefd5e0827.html",
+      "title": "叩关未果：沪铜为何止步11万，困在10.78-10.95万区间震荡",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/8ba4a5a22600452c874cddf36b0f0182.html",
       "tag": "铜",
       "date": "2026-09-02"
     },
     {
-      "title": "● 长江现货铜现货升水收窄，下游采购能否延续回暖？",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/7a3420f8c0d34e1a9c51f6af3e4d545a.html",
+      "title": "● 伦外铜跌92美元、美铜失守660！沪铜2610跟跌1670，关税与美元谁在主导这轮回调？",
+      "url": "https://www.ccmn.cn/news/ZX018/202609/883e245e759644b4a243b274d585b601.html",
       "tag": "铜",
       "date": "2026-09-02"
     },
     {
-      "title": "● 长江有色：1日铜价大涨  下游恐高压制交投热度",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/1c79b40764a84dc18c8446793f49ea49.html",
+      "title": "● 无氧铜丝、漆包线齐跌1670！铜价回落向终端传导，电网与AI算力用铜能否稳稳接住？",
+      "url": "https://www.ccmn.cn/news/ZX018/202609/e24e61d61a1346cfaf79f944f421fb23.html",
       "tag": "铜",
       "date": "2026-09-02"
     },
     {
-      "title": "● 长江现货ADC12跟涨100元，铸造铝合金成交能否放量？",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/66b057dfdbba4ea69c81135986f4bf8f.html",
+      "title": "● 氧化铝2683元抬成本、日本Q4升水砍至310美元，铝加工利润正被上下挤压",
+      "url": "https://www.ccmn.cn/news/ZX018/202609/5bc4c335655b4a399c28dc0ef076f637.html",
       "tag": "铝",
       "date": "2026-09-02"
     },
     {
-      "title": "● 氧化铝现货持平，成本支撑能否守住底线？",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/cf9bc3c056284298b11cfb9ac1935195.html",
-      "tag": "铝",
-      "date": "2026-09-02"
-    },
-    {
-      "title": "● 铝现货转平水，供需双增下还能涨吗？",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/315d269d26214f2b903c340c0a135d9e.html",
+      "title": "● 上期所铝库存10周连降至39.15万吨！LME仅24.67万吨，升贴水由平水转升15元",
+      "url": "https://www.ccmn.cn/news/ZX018/202609/717d9a82d6a4472eb622618a299f6f01.html",
       "tag": "铝",
       "date": "2026-09-02"
     },
@@ -41,6 +35,12 @@
       "title": "稀土行情: 上海有色网稀土氧化物价格专区为用户提供今日最新稀土金属氧化物价格行情,包括氧化镧价格、氧化铈价格、氧化镨价格、氧化钕价格、镨钕氧化物价格、氧化钐价格、氧化铕价格、氧化钆价格、氧化铽价格、氧化镝价格、氧",
       "url": "https://hq.smm.cn/h5/rare-earth-metal-oxides-price",
       "tag": "稀土",
+      "date": "2026-09-02"
+    },
+    {
+      "title": "Mysteel：2日唐山钢市快报",
+      "url": "https://gc.mysteel.com/a/26090210/9BA85DE6B99498FE.html",
+      "tag": "硅钢",
       "date": "2026-09-02"
     },
     {
@@ -52,12 +52,6 @@
     {
       "title": "Mysteel日报：国内无取向硅钢价格偏稳 市场成交一般",
       "url": "https://gc.mysteel.com/a/26083116/55C9973B47ACE088.html",
-      "tag": "硅钢",
-      "date": "2026-09-02"
-    },
-    {
-      "title": "Mysteel日报：国内无取向硅钢价格上调 成交表现一般",
-      "url": "https://gc.mysteel.com/a/26082817/32E1F5E3D065968E.html",
       "tag": "硅钢",
       "date": "2026-09-02"
     }
