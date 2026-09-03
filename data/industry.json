@@ -1,6 +1,12 @@
 {
-  "update_time": "2026-09-03 16:12",
+  "update_time": "2026-09-03 16:24",
   "items": [
+    {
+      "title": "● 【铜日报】长江现货1#铜均价上调 贸易商出货积极",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/e9f2a388e1224d4dab03fd8c5c472230.html",
+      "tag": "铜",
+      "date": "2026-09-03"
+    },
     {
       "title": "● 现货1#铜报109590、升水390！无氧铜丝漆包线齐涨680，紧平衡下基差信号怎么读？",
       "url": "https://www.ccmn.cn/news/ZX018/202609/adbca7e2d72647768dd760ecb449e45d.html",
@@ -14,26 +20,20 @@
       "date": "2026-09-03"
     },
     {
-      "title": "● 供给受限叠加AI新能源需求爆发！瑞银喊出2026年底铜价1.5万美元，紧周期来了？",
-      "url": "https://www.ccmn.cn/news/ZX018/202609/0b45c58b9efe4933ae5ebf9d8965a8c7.html",
-      "tag": "铜",
-      "date": "2026-09-03"
-    },
-    {
-      "title": "● 氧化铝2683元抬成本、进口矿海运费逼40美元！ADC12与A356.2跟涨200元，铝加工利润账本生变",
-      "url": "https://www.ccmn.cn/news/ZX018/202609/1200e1151cea4e2cb81d1998b2c384f8.html",
+      "title": "● 【铝日报】库存延续去化 长江现货A00铝价格上涨",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/04b1c24e0b65472e901d60e62fadbf47.html",
       "tag": "铝",
       "date": "2026-09-03"
     },
     {
-      "title": "● Q4原铝对日升水砍22%至310美元！伦铝却逆势冲3295，亚洲溢价松绑与内外定价拉锯加剧",
-      "url": "https://www.ccmn.cn/news/ZX018/202609/49565574de9144058a89b5335e35bf9a.html",
+      "title": "● 【氧化铝日报】华东现货持稳，氧化铝主力跟涨",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/9f9bb42e54a14a479727dc1828581262.html",
       "tag": "铝",
       "date": "2026-09-03"
     },
     {
-      "title": "● 沪铝2610冲破24400、现货A00铝站上24350！库存连降10周叠加升贴水转升，铝价底盘被重新焊牢",
-      "url": "https://www.ccmn.cn/news/ZX018/202609/1421b5acc7aa46cdb4f0d7244d0050f3.html",
+      "title": "● 【铸造铝合金日报】废铝货源偏紧 长江现货ADC12均价上调200元",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/0df1e293c67949e583f4aa3e12d83cf0.html",
       "tag": "铝",
       "date": "2026-09-03"
     },
