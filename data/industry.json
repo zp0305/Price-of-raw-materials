@@ -1,9 +1,15 @@
 {
-  "update_time": "2026-09-16 16:45",
+  "update_time": "2026-09-16 16:57",
   "items": [
     {
       "title": "铜价为何在美联储决议前夜逆势走强？",
       "url": "https://www.ccmn.cn/news/ZX003/202609/0aac8abac0ac460e9192197746b6f52b.html",
+      "tag": "铜",
+      "date": "2026-09-16"
+    },
+    {
+      "title": "● 【铜日报】现货升水坚挺  铜价止跌反弹",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/bd99277fcca9494e9f6a4baf07756b22.html",
       "tag": "铜",
       "date": "2026-09-16"
     },
@@ -14,26 +20,20 @@
       "date": "2026-09-16"
     },
     {
-      "title": "● 长江有色：16日铜价上涨   下游恐高情绪未消",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/2df5fa7d80964dffa2c5fd357b38a86a.html",
-      "tag": "铜",
-      "date": "2026-09-16"
-    },
-    {
-      "title": "● 长江有色：16日铝价上涨   整体成交市况欠佳",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/23d9cfa49db34eebbb014ff5610b17bc.html",
+      "title": "● 【铝日报】低库存促持货商挺价意愿 今日现货铝小涨",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/161af13953ae4c2e86d446cd0277ed9f.html",
       "tag": "铝",
       "date": "2026-09-16"
     },
     {
-      "title": "● 长江有色：16日氧化铝期价收平   下游刚需接货乏力",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/a58baf9e7a8c4274b7b08aa0bcf3ae92.html",
+      "title": "● 【铸造铝合金日报】废铝货源偏紧抬升成本 ADC12现货持稳为主",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/edc4756dafb3404aa33654f1fabc979a.html",
       "tag": "铝",
       "date": "2026-09-16"
     },
     {
-      "title": "● 长江有色：16日铸造铝期价收涨0.43%   下游畏高、仅刚需接货",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/5e5f9fcc2fbb42ad8135c387c8f8e448.html",
+      "title": "● 【氧化铝日报】成本支撑与供应宽松相抵  华东现货持稳",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/d7e53e7895f44814bc1754bad0da5ae3.html",
       "tag": "铝",
       "date": "2026-09-16"
     },
