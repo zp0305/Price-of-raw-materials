@@ -1,9 +1,15 @@
 {
-  "update_time": "2026-09-16 16:57",
+  "update_time": "2026-09-16 20:25",
   "items": [
     {
       "title": "铜价为何在美联储决议前夜逆势走强？",
       "url": "https://www.ccmn.cn/news/ZX003/202609/0aac8abac0ac460e9192197746b6f52b.html",
+      "tag": "铜",
+      "date": "2026-09-16"
+    },
+    {
+      "title": "● 172 万吨！刚果（金）上半年铜出口大增，欧美采购份额实现翻倍",
+      "url": "https://www.ccmn.cn/news/ZX018/202609/575f3645e5424eb097c2a660ad6a642f.html",
       "tag": "铜",
       "date": "2026-09-16"
     },
@@ -14,14 +20,14 @@
       "date": "2026-09-16"
     },
     {
-      "title": "● 【六大金属行情综合研判】宏观加息预期施压，沪铜强势上行，沪镍弱势创新低",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/639b51f7ce4641ca94a8f3cb142d6529.html",
-      "tag": "铜",
+      "title": "● 【铝日报】低库存促持货商挺价意愿 今日现货铝小涨",
+      "url": "https://www.ccmn.cn/news/ZX003/202609/161af13953ae4c2e86d446cd0277ed9f.html",
+      "tag": "铝",
       "date": "2026-09-16"
     },
     {
-      "title": "● 【铝日报】低库存促持货商挺价意愿 今日现货铝小涨",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/161af13953ae4c2e86d446cd0277ed9f.html",
+      "title": "● 398 万吨！8 月原铝产量创历史新高，高利润驱动冶炼厂全力释放产能",
+      "url": "https://www.ccmn.cn/news/ZX018/202609/ce5b82aa3b954cc2a89c42ac337fc6d6.html",
       "tag": "铝",
       "date": "2026-09-16"
     },
@@ -32,15 +38,15 @@
       "date": "2026-09-16"
     },
     {
-      "title": "● 【氧化铝日报】成本支撑与供应宽松相抵  华东现货持稳",
-      "url": "https://www.ccmn.cn/news/ZX003/202609/d7e53e7895f44814bc1754bad0da5ae3.html",
-      "tag": "铝",
-      "date": "2026-09-16"
-    },
-    {
       "title": "稀土行情: 上海有色网稀土氧化物价格专区为用户提供今日最新稀土金属氧化物价格行情,包括氧化镧价格、氧化铈价格、氧化镨价格、氧化钕价格、镨钕氧化物价格、氧化钐价格、氧化铕价格、氧化钆价格、氧化铽价格、氧化镝价格、氧",
       "url": "https://hq.smm.cn/h5/rare-earth-metal-oxides-price",
       "tag": "稀土",
+      "date": "2026-09-16"
+    },
+    {
+      "title": "Mysteel日报：国内无取向硅钢价格整体持稳 成交表现平淡",
+      "url": "https://gc.mysteel.com/a/26091617/D2710038041DF62A.html",
+      "tag": "硅钢",
       "date": "2026-09-16"
     },
     {
@@ -52,12 +58,6 @@
     {
       "title": "Mysteel日报：国内无取向硅钢价格略有走弱",
       "url": "https://gc.mysteel.com/a/26091517/E7CF502B50BC2F3A.html",
-      "tag": "硅钢",
-      "date": "2026-09-16"
-    },
-    {
-      "title": "Mysteel日报：国内无取向硅钢价格继续持稳 需求依旧疲软",
-      "url": "https://gc.mysteel.com/a/26091417/CB60C3A802D2E5F0.html",
       "tag": "硅钢",
       "date": "2026-09-16"
     }
