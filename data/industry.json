@@ -1,9 +1,15 @@
 {
-  "update_time": "2026-11-24 02:59",
+  "update_time": "2026-11-24 07:16",
   "items": [
     {
       "title": "沪铜逼近9万关口：这轮暴跌的底在哪里？",
       "url": "https://www.ccmn.cn/news/ZX003/202611/9881b9719a734a6cada10505d7959aec.html",
+      "tag": "铜",
+      "date": "2026-11-24"
+    },
+    {
+      "title": "● LME金属期货止跌反弹 伦铜涨幅2.53%",
+      "url": "https://www.ccmn.cn/news/ZX003/202611/2e543ab84548492f9fbddf873423da28.html",
       "tag": "铜",
       "date": "2026-11-24"
     },
@@ -22,12 +28,6 @@
     {
       "title": "● 【铝日报】冶炼成本重心上移 今日A00铝价格上涨",
       "url": "https://www.ccmn.cn/news/ZX003/202611/a1b8fd71de6f4c9e999db7c54b3b853c.html",
-      "tag": "铝",
-      "date": "2026-11-24"
-    },
-    {
-      "title": "● 【氧化铝日报】华东现货氧化铝报价坚挺 盘面补跌",
-      "url": "https://www.ccmn.cn/news/ZX003/202611/978bf5def80b414884a7b1fb138a888d.html",
       "tag": "铝",
       "date": "2026-11-24"
     },
